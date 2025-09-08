@@ -1,8 +1,72 @@
-@import "tailwindcss";
+/* src/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-html,body{height:100%}
-body{background:#f7f7f8;color:#111827}
+/* ---------- Theme & Page background ---------- */
+:root {
+  --card-shadow: 0 10px 30px -12px rgba(0,0,0,.20);
+}
 
-.card{ @apply rounded-2xl border border-gray-200 bg-white shadow-sm; }
-.badge{ @apply inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-800 ring-1 ring-gray-200; }
-.filters{ @apply grid grid-cols-1 gap-3 sm:grid-cols-3; }
+html, body { height: 100%; }
+
+body {
+  @apply bg-zinc-50 text-zinc-900 antialiased;
+  /* Soft radial gradients pinned to top corners */
+  background-image:
+    radial-gradient(1200px 600px at 10% 0%, rgba(16,185,129,.08), transparent),
+    radial-gradient(800px 500px at 90% 0%, rgba(59,130,246,.06), transparent);
+  background-attachment: fixed;
+}
+
+/* ---------- Reusable components (no JS) ---------- */
+@layer components {
+  /* Card shells */
+  .card        { @apply rounded-2xl border border-zinc-200 bg-white shadow-sm; }
+  .card-elevate{ box-shadow: var(--card-shadow); }
+
+  /* Subtle hover lift */
+  .hover-lift  { @apply transition-transform duration-300 ease-out; transform: translateY(0); }
+  .hover-lift:hover { transform: translateY(-6px); }
+
+  /* Image zoom on hover (use with .group) */
+  .img-zoom    { @apply overflow-hidden rounded-2xl; }
+  .img-zoom img{
+    @apply transition-transform duration-500 ease-out;
+    transform: scale(1.02);
+  }
+  .group:hover .img-zoom img { transform: scale(1.06); }
+
+  /* Dark-to-clear overlay for hero/listing images */
+  .gradient-overlay { position: relative; }
+  .gradient-overlay::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,.55),
+      rgba(0,0,0,.15) 45%,
+      transparent 70%
+    );
+  }
+
+  /* Pills / badges */
+  .badge       { @apply rounded-full bg-zinc-100 px-3 py-1 text-xs text-zinc-800; }
+
+  /* Primary button */
+  .btn-primary { @apply inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-white transition-colors hover:bg-emerald-700; }
+}
+
+/* ---------- Animations (utilities) ---------- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+@layer utilities {
+  .animate-in { animation: fadeIn .45s ease both; }
+  .animate-up { animation: fadeInUp .50s ease both; }
+}

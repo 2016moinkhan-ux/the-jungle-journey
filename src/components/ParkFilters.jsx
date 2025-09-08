@@ -1,131 +1,123 @@
 // src/components/ParkFilters.jsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
-/**
- * Client filter bar
- * props:
- *  - items: Park[]
- *  - labels: { searchPh, districtAll, safariAll }  // strings only
- *  - lang: "en" | "hi"
- *  - children: (filteredItems: Park[]) => ReactNode
- */
-export default function ParkFilters({ items = [], labels, lang = "en", children }) {
-  const [q, setQ] = useState("");
-  const [district, setDistrict] = useState("");
-  const [safari, setSafari] = useState("");
+// helper: {en,hi} object या string —> localized string
+const pick = (v, lang) =>
+  typeof v === "string" ? v : (v?.[lang] || v?.en || "");
 
-  // unique district options from data (localized)
-  const districtOptions = useMemo(() => {
-    const set = new Set();
+// client-safe labels (सिर्फ strings + fallbacks)
+const safeLabels = (L, lang) => ({
+  searchPh:
+    L?.searchPh ||
+    (lang === "hi" ? "खोजें (उदा. पेंच)" : "Search park (e.g. Pench)"),
+  districtAll: L?.districtAll || (lang === "hi" ? "सभी ज़िले" : "All"),
+  safariAll: L?.safariAll || (lang === "hi" ? "सभी सफ़ारी प्रकार" : "All"),
+  clearFilters: L?.clearFilters || (lang === "hi" ? "फ़िल्टर साफ़ करें" : "Clear filters"),
+});
+
+export default function ParkFilters({
+  q,
+  setQ,
+  district,
+  setDistrict,
+  safari,
+  setSafari,
+  items = [],
+  labels,
+  lang = "en",
+}) {
+  const L = safeLabels(labels, lang);
+
+  // options (language-aware)
+  const { districts, safaris } = useMemo(() => {
+    const dset = new Set();
+    const sset = new Set();
+
     items.forEach((p) => {
-      const d =
-        (p?.district && (p.district[lang] ?? p.district.en ?? p.district.hi)) ||
-        (typeof p?.district === "string" ? p.district : "");
-      if (d && d.trim()) set.add(d.trim());
+      const d = pick(p.district, lang)?.trim();
+      if (d) dset.add(d);
+
+      const sArr = Array.isArray(p.safariTypes)
+        ? p.safariTypes
+        : p.safariTypes?.[lang] || p.safariTypes?.en || [];
+      (sArr || []).forEach((s) => {
+        const v = typeof s === "string" ? s : pick(s, lang);
+        if (v) sset.add(v);
+      });
     });
-    return ["", ...Array.from(set)]; // "" => All
+
+    return {
+      districts: ["", ...Array.from(dset).sort((a, b) => a.localeCompare(b))],
+      safaris: ["", ...Array.from(sset).sort((a, b) => a.localeCompare(b))],
+    };
   }, [items, lang]);
 
-  // unique safari options from data (localized)
-  const safariOptions = useMemo(() => {
-    const set = new Set();
-    items.forEach((p) => {
-      const raw =
-        (p?.safariTypes && (p.safariTypes[lang] ?? p.safariTypes.en ?? p.safariTypes.hi)) ||
-        p?.safariTypes ||
-        [];
-      const arr = Array.isArray(raw) ? raw : String(raw).split(/[,\|]/);
-      arr
-        .map((s) => String(s).trim())
-        .filter(Boolean)
-        .forEach((s) => set.add(s));
-    });
-    return ["", ...Array.from(set)];
-  }, [items, lang]);
+  const somethingActive = Boolean(
+    (q && q.trim() !== "") || (district && district !== "") || (safari && safari !== "")
+  );
 
-  // apply filters
-  const filtered = useMemo(() => {
-    const query = q.trim().toLowerCase();
-    return items.filter((p) => {
-      // name/desc search
-      const name =
-        (p?.name && (p.name[lang] ?? p.name.en ?? p.name.hi)) ||
-        (typeof p?.name === "string" ? p.name : "");
-      const desc =
-        (p?.description && (p.description[lang] ?? p.description.en ?? p.description.hi)) ||
-        (typeof p?.description === "string" ? p.description : "");
-
-      const matchesQ =
-        !query ||
-        String(name).toLowerCase().includes(query) ||
-        String(desc).toLowerCase().includes(query) ||
-        String(p?.id ?? "").toLowerCase().includes(query);
-
-      // district match
-      const dLocal =
-        (p?.district && (p.district[lang] ?? p.district.en ?? p.district.hi)) ||
-        (typeof p?.district === "string" ? p.district : "");
-      const matchesDistrict = !district || String(dLocal) === district;
-
-      // safari match
-      const raw =
-        (p?.safariTypes && (p.safariTypes[lang] ?? p.safariTypes.en ?? p.safariTypes.hi)) ||
-        p?.safariTypes ||
-        [];
-      const arr = Array.isArray(raw) ? raw : String(raw).split(/[,\|]/);
-      const hasSafari = arr.map((s) => String(s).trim());
-      const matchesSafari = !safari || hasSafari.includes(safari);
-
-      return matchesQ && matchesDistrict && matchesSafari;
-    });
-  }, [items, q, district, safari, lang]);
+  const handleClear = () => {
+    setQ("");
+    setDistrict("");
+    setSafari("");
+  };
 
   return (
-    <>
-      {/* Filters row */}
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={labels?.searchPh || "Search..."}
-          className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2"
-        />
+    <div className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-3 items-start">
+      {/* Search */}
+      <input
+        type="text"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder={L.searchPh}
+        className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300"
+      />
 
-        <select
-          value={district}
-          onChange={(e) => setDistrict(e.target.value)}
-          className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2"
-        >
-          <option value="">{labels?.districtAll || "All"}</option>
-          {districtOptions.map((opt, i) =>
-            opt ? (
-              <option key={`${opt}-${i}`} value={opt}>
-                {opt}
-              </option>
-            ) : null
-          )}
-        </select>
+      {/* District */}
+      <select
+        value={district}
+        onChange={(e) => setDistrict(e.target.value)}
+        className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300"
+      >
+        {districts.map((d, i) => (
+          <option key={i} value={d || ""}>
+            {d || L.districtAll}
+          </option>
+        ))}
+      </select>
 
+      {/* Safari type + Clear */}
+      <div className="flex gap-3">
         <select
           value={safari}
           onChange={(e) => setSafari(e.target.value)}
-          className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2"
+          className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300"
         >
-          <option value="">{labels?.safariAll || "All"}</option>
-          {safariOptions.map((opt, i) =>
-            opt ? (
-              <option key={`${opt}-${i}`} value={opt}>
-                {opt}
-              </option>
-            ) : null
-          )}
+          {safaris.map((s, i) => (
+            <option key={i} value={s || ""}>
+              {s || L.safariAll}
+            </option>
+          ))}
         </select>
-      </div>
 
-      {/* Render filtered list */}
-      {typeof children === "function" ? children(filtered) : null}
-    </>
+        {/* Clear filters */}
+        <button
+          type="button"
+          onClick={handleClear}
+          disabled={!somethingActive}
+          className={`shrink-0 rounded-xl px-3 py-2 border transition
+            ${somethingActive
+              ? "border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+              : "border-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
+          aria-label={L.clearFilters}
+          title={L.clearFilters}
+        >
+          {L.clearFilters}
+        </button>
+      </div>
+    </div>
   );
 }
