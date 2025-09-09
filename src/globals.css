@@ -1,72 +1,77 @@
-/* src/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ---------- Theme & Page background ---------- */
+/* ——— Jungle mobile theme ——— */
 :root {
-  --card-shadow: 0 10px 30px -12px rgba(0,0,0,.20);
+  --jungle-bg: #0b1f16;
+  --jungle-accent: #1faa7a;
+  --jungle-ink: #0e1b14;
+  --jungle-chip: rgba(255,255,255,0.85);
+  --card-bg: rgba(255,255,255,0.94);
+  --card-border: rgba(16, 37, 28, 0.08);
 }
-
-html, body { height: 100%; }
 
 body {
-  @apply bg-zinc-50 text-zinc-900 antialiased;
-  /* Soft radial gradients pinned to top corners */
-  background-image:
-    radial-gradient(1200px 600px at 10% 0%, rgba(16,185,129,.08), transparent),
-    radial-gradient(800px 500px at 90% 0%, rgba(59,130,246,.06), transparent);
+  background:
+    radial-gradient(1200px 600px at 20% -10%, #123524 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 10%, #0e2a1d 0%, transparent 55%),
+    var(--jungle-bg);
   background-attachment: fixed;
+  color: #f2f6f3;
 }
 
-/* ---------- Reusable components (no JS) ---------- */
-@layer components {
-  /* Card shells */
-  .card        { @apply rounded-2xl border border-zinc-200 bg-white shadow-sm; }
-  .card-elevate{ box-shadow: var(--card-shadow); }
-
-  /* Subtle hover lift */
-  .hover-lift  { @apply transition-transform duration-300 ease-out; transform: translateY(0); }
-  .hover-lift:hover { transform: translateY(-6px); }
-
-  /* Image zoom on hover (use with .group) */
-  .img-zoom    { @apply overflow-hidden rounded-2xl; }
-  .img-zoom img{
-    @apply transition-transform duration-500 ease-out;
-    transform: scale(1.02);
-  }
-  .group:hover .img-zoom img { transform: scale(1.06); }
-
-  /* Dark-to-clear overlay for hero/listing images */
-  .gradient-overlay { position: relative; }
-  .gradient-overlay::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,.55),
-      rgba(0,0,0,.15) 45%,
-      transparent 70%
-    );
-  }
-
-  /* Pills / badges */
-  .badge       { @apply rounded-full bg-zinc-100 px-3 py-1 text-xs text-zinc-800; }
-
-  /* Primary button */
-  .btn-primary { @apply inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-white transition-colors hover:bg-emerald-700; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: url("/jungle-bg.jpg") center/cover no-repeat;
+  opacity: .20;
+  filter: saturate(0.9) contrast(1.05) brightness(0.9) blur(1px);
+  z-index: -1;
 }
 
-/* ---------- Animations (utilities) ---------- */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Card look */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 1.25rem; /* rounded-2xl */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
+.card:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-@layer utilities {
-  .animate-in { animation: fadeIn .45s ease both; }
-  .animate-up { animation: fadeInUp .50s ease both; }
+/* Chip / pill look */
+.chip {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--jungle-chip);
+  color: var(--jungle-ink);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0.15rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.btn-primary {
+  background: var(--jungle-accent);
+  color: white;
+}
+.btn-primary:hover {
+  background: #159268;
+  transform: scale(1.03);
 }

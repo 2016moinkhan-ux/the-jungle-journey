@@ -1,79 +1,53 @@
 // src/i18n/lang.js
-
-export const LABELS = {
+export const LBL = {
   en: {
-    appTitle: "The Jungle Journey",
-    listTitle: "Madhya Pradesh — National Parks",
-    totalPrefix: "Total",
+    title: "The Jungle Journey",
+    subtitle: "Madhya Pradesh — National Parks",
     searchPh: "Search park (e.g. Pench)",
-    districtAll: "All Districts",
-    safariAll: "All Safaris",
+    allDistricts: "All districts",
+    allSafaris: "All safaris",
+    clearFilters: "Clear filters",
+    viewDetails: "View details",
     bestTime: "Best time",
     safari: "Safari",
-    viewDetails: "View details →",
-    backToList: "← Back to Parks",
-    bookPermit: "Book Official Permit",
-    moreInfo: "More Info",
+    backToParks: "Back to Parks",
+    bookOfficial: "Book official permit",
+    district: "District",
     zones: "Zones",
-    entryGates: "Entry Gates",
-    timings: "Timings",
-    wildlife: "Key Wildlife",
-    reach: "How to Reach",
-    tips: "Visitor Tips",
-    fee: "Permits & Fees",
+    entryGates: "Entry gates",
+    timings: "Safari timings",
+    summer: "Summer",
+    winter: "Winter",
+    wildlife: "Wildlife",
+    howToReach: "How to reach",
+    tips: "Tips",
+    hi: "हिंदी",
+    en: "English",
   },
   hi: {
-    appTitle: "The Jungle Journey",
-    listTitle: "मध्य प्रदेश — राष्ट्रीय उद्यान",
-    totalPrefix: "कुल",
+    title: "The Jungle Journey",
+    subtitle: "मध्य प्रदेश — राष्ट्रीय उद्यान",
     searchPh: "खोजें (उदा. पेंच)",
-    districtAll: "सभी ज़िले",
-    safariAll: "सभी सफ़ारी",
+    allDistricts: "सभी ज़िले",
+    allSafaris: "सभी सफ़री",
+    clearFilters: "फ़िल्टर साफ़",
+    viewDetails: "विवरण देखें",
     bestTime: "उत्तम समय",
-    safari: "सफ़ारी",
-    viewDetails: "विस्तार देखें →",
-    backToList: "← पार्क सूची पर",
-    bookPermit: "आधिकारिक परमिट बुक करें",
-    moreInfo: "और जानकारी",
-    zones: "ज़ोन्स",
-    entryGates: "प्रवेश द्वार",
+    safari: "सफ़री",
+    backToParks: "पार्क्स पर वापस",
+    bookOfficial: "आधिकारिक परमिट बुक करें",
+    district: "ज़िला",
+    zones: "ज़ोन",
+    entryGates: "एंट्री गेट",
     timings: "समय",
-    wildlife: "मुख्य वन्यजीव",
-    reach: "कैसे पहुँचें",
-    tips: "यात्री सुझाव",
-    fee: "परमिट व शुल्क",
+    summer: "गर्मी",
+    winter: "सर्दी",
+    wildlife: "वाइल्डलाइफ़",
+    howToReach: "कैसे पहुँचें",
+    tips: "टिप्स",
+    hi: "हिंदी",
+    en: "English",
   },
 };
 
-/** value → localized text (string) */
-export function T(value, lang) {
-  if (value == null) return "";
-  if (typeof value === "string") return value;
-  if (Array.isArray(value)) return value.join(", ");
-  if (typeof value === "object") {
-    const v = value[lang] ?? value.en ?? "";
-    return Array.isArray(v) ? v.join(", ") : String(v);
-  }
-  return String(value);
-}
-
-/** value → array (for list-y fields like safariTypes, zones) */
-export function toArray(value, lang) {
-  if (!value) return [];
-  if (Array.isArray(value)) return value;
-  if (typeof value === "object") {
-    const v = value[lang] ?? value.en ?? [];
-    return Array.isArray(v) ? v : v ? [v] : [];
-  }
-  return [value];
-}
-
-/** lang resolver: accepts URLSearchParams OR plain object */
-export function getLang(sp) {
-  const raw =
-    (sp && typeof sp.get === "function" && sp.get("lang")) ||
-    (sp && sp.lang) ||
-    "";
-  const v = String(raw).toLowerCase();
-  return v === "hi" ? "hi" : "en";
-}
+export const ui = (lang) => LBL[lang === "hi" ? "hi" : "en"];

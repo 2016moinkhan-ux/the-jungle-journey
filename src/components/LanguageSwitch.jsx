@@ -1,41 +1,48 @@
+// src/components/LanguageSwitch.jsx
 "use client";
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useMemo, useCallback } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function LanguageSwitch() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export default function LanguageSwitch({ className = "" }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const sp = useSearchParams();
 
-  const currentLang = searchParams.get("lang") === "hi" ? "hi" : "en";
+  // current language -> "en" | "hi"
+  const lang = (sp?.get("lang") === "hi" ? "hi" : "en");
 
-  function switchLang(lang) {
-    const params = new URLSearchParams(searchParams);
-    params.set("lang", lang);
-    router.push(`${pathname}?${params.toString()}`);
-  }
+  // build a new query string but with lang replaced
+  const makeHref = useCallback((nextLang) => {
+    const params = new URLSearchParams(sp?.toString() || "");
+    if (nextLang) params.set("lang", nextLang);
+    else params.delete("lang");
+    return `${pathname}?${params.toString()}`;
+  }, [pathname, sp]);
+
+  const other = lang === "hi" ? "en" : "hi";
+  const labels = useMemo(() => ({
+    en: { self: "English", other: "हिंदी" },
+    hi: { self: "हिंदी", other: "English" },
+  }), []);
 
   return (
-    <div className="flex gap-2 mb-6">
-      <button
-        onClick={() => switchLang("en")}
-        className={`px-3 py-1 rounded-full border ${
-          currentLang === "en"
-            ? "bg-gray-900 text-white"
-            : "bg-white text-gray-900"
-        }`}
+    <div className={`flex items-center gap-2 ${className}`}>
+      {/* current */}
+      <span
+        aria-label="current language"
+        className="select-none rounded-full border border-green-400/40 bg-green-700/20 px-3 py-1 text-xs font-medium text-green-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
       >
-        English
-      </button>
+        {labels[lang].self}
+      </span>
+
+      {/* switch button */}
       <button
-        onClick={() => switchLang("hi")}
-        className={`px-3 py-1 rounded-full border ${
-          currentLang === "hi"
-            ? "bg-gray-900 text-white"
-            : "bg-white text-gray-900"
-        }`}
+        type="button"
+        onClick={() => router.push(makeHref(other))}
+        className="rounded-full border border-zinc-500/50 bg-zinc-800/50 px-3 py-1 text-xs font-medium text-zinc-100 hover:bg-zinc-700/60 hover:border-zinc-400 transition"
       >
-        हिंदी
+        {labels[lang].other}
       </button>
     </div>
   );

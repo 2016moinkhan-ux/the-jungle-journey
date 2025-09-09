@@ -3,47 +3,60 @@
 
 import { useMemo } from "react";
 
-// helper: {en,hi} object या string —> localized string
+/** helper: {en,hi} या string → चुनी हुई भाषा की string */
 const pick = (v, lang) =>
   typeof v === "string" ? v : (v?.[lang] || v?.en || "");
 
-// client-safe labels (सिर्फ strings + fallbacks)
-const safeLabels = (L, lang) => ({
-  searchPh:
-    L?.searchPh ||
-    (lang === "hi" ? "खोजें (उदा. पेंच)" : "Search park (e.g. Pench)"),
-  districtAll: L?.districtAll || (lang === "hi" ? "सभी ज़िले" : "All"),
-  safariAll: L?.safariAll || (lang === "hi" ? "सभी सफ़ारी प्रकार" : "All"),
-  clearFilters: L?.clearFilters || (lang === "hi" ? "फ़िल्टर साफ़ करें" : "Clear filters"),
-});
+/** helper: list normalize */
+const list = (v, lang) => {
+  const arr = Array.isArray(v) ? v : v?.[lang] || v?.en || [];
+  return (arr || []).map((x) => (typeof x === "string" ? x : pick(x, lang)));
+};
 
-export default function ParkFilters({
-  q,
-  setQ,
-  district,
-  setDistrict,
-  safari,
-  setSafari,
-  items = [],
-  labels,
-  lang = "en",
-}) {
-  const L = safeLabels(labels, lang);
+/**
+ * Props (client-safe)
+ * - q, setQ                       → search text state
+ * - district, setDistrict         → selected district
+ * - safari, setSafari             → selected safari type
+ * - parks OR items                → array of park objects
+ * - lang                          → "en" | "hi"
+ */
+export default function ParkFilters(props) {
+  const {
+    q,
+    setQ,
+    district,
+    setDistrict,
+    safari,
+    setSafari,
+    parks,
+    items,
+    lang = "en",
+  } = props;
 
-  // options (language-aware)
+  const base = Array.isArray(parks) ? parks : Array.isArray(items) ? items : [];
+
+  // labels (client-safe)
+  const L = {
+    searchPh:
+      lang === "hi" ? "खोजें (उदा. पेंच)" : "Search park (e.g. Pench)",
+    districtAll: lang === "hi" ? "सभी ज़िले" : "All districts",
+    safariAll: lang === "hi" ? "सभी सफ़ारी" : "All safaris",
+  };
+
+  // options: districts & safaris (language-aware)
   const { districts, safaris } = useMemo(() => {
     const dset = new Set();
     const sset = new Set();
 
-    items.forEach((p) => {
-      const d = pick(p.district, lang)?.trim();
+    base.forEach((p) => {
+      // district
+      const d = pick(p?.district, lang)?.trim();
       if (d) dset.add(d);
 
-      const sArr = Array.isArray(p.safariTypes)
-        ? p.safariTypes
-        : p.safariTypes?.[lang] || p.safariTypes?.en || [];
-      (sArr || []).forEach((s) => {
-        const v = typeof s === "string" ? s : pick(s, lang);
+      // safaris
+      list(p?.safariTypes, lang).forEach((s) => {
+        const v = (s || "").trim();
         if (v) sset.add(v);
       });
     });
@@ -52,72 +65,50 @@ export default function ParkFilters({
       districts: ["", ...Array.from(dset).sort((a, b) => a.localeCompare(b))],
       safaris: ["", ...Array.from(sset).sort((a, b) => a.localeCompare(b))],
     };
-  }, [items, lang]);
-
-  const somethingActive = Boolean(
-    (q && q.trim() !== "") || (district && district !== "") || (safari && safari !== "")
-  );
-
-  const handleClear = () => {
-    setQ("");
-    setDistrict("");
-    setSafari("");
-  };
+  }, [base, lang]);
 
   return (
-    <div className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-3 items-start">
+    <div className="mb-6 grid gap-3 sm:grid-cols-3">
       {/* Search */}
       <input
         type="text"
         value={q}
-        onChange={(e) => setQ(e.target.value)}
+        onChange={(e) => setQ?.(e.target.value)}
         placeholder={L.searchPh}
-        className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300"
+        className="w-full rounded-xl border border-emerald-800/30 bg-emerald-950/40 px-3 py-2 text-emerald-50 placeholder:text-emerald-200/60 focus:border-emerald-400/60 focus:outline-none"
       />
 
       {/* District */}
       <select
         value={district}
-        onChange={(e) => setDistrict(e.target.value)}
-        className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300"
+        onChange={(e) => setDistrict?.(e.target.value)}
+        className="w-full rounded-xl border border-emerald-800/30 bg-emerald-950/40 px-3 py-2 text-emerald-50 focus:border-emerald-400/60 focus:outline-none"
       >
-        {districts.map((d, i) => (
-          <option key={i} value={d || ""}>
-            {d || L.districtAll}
-          </option>
-        ))}
-      </select>
-
-      {/* Safari type + Clear */}
-      <div className="flex gap-3">
-        <select
-          value={safari}
-          onChange={(e) => setSafari(e.target.value)}
-          className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300"
-        >
-          {safaris.map((s, i) => (
-            <option key={i} value={s || ""}>
-              {s || L.safariAll}
+        <option value="">{L.districtAll}</option>
+        {districts
+          .filter((d) => d) // remove the leading ""
+          .map((d) => (
+            <option key={d} value={d}>
+              {d}
             </option>
           ))}
-        </select>
+      </select>
 
-        {/* Clear filters */}
-        <button
-          type="button"
-          onClick={handleClear}
-          disabled={!somethingActive}
-          className={`shrink-0 rounded-xl px-3 py-2 border transition
-            ${somethingActive
-              ? "border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-              : "border-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-          aria-label={L.clearFilters}
-          title={L.clearFilters}
-        >
-          {L.clearFilters}
-        </button>
-      </div>
+      {/* Safari type */}
+      <select
+        value={safari}
+        onChange={(e) => setSafari?.(e.target.value)}
+        className="w-full rounded-xl border border-emerald-800/30 bg-emerald-950/40 px-3 py-2 text-emerald-50 focus:border-emerald-400/60 focus:outline-none"
+      >
+        <option value="">{L.safariAll}</option>
+        {safaris
+          .filter((s) => s) // remove the leading ""
+          .map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+      </select>
     </div>
   );
 }

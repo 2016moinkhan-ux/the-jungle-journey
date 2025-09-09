@@ -1,78 +1,112 @@
+// src/components/ParkCard.jsx
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 
-// helper: {en,hi} object या string —> localized string
+/** helper: {en,hi} या string → चुनी हुई भाषा की string */
 const pick = (v, lang) =>
   typeof v === "string" ? v : (v?.[lang] || v?.en || "");
 
-export default function ParkCard({ park, L, lang = "en" }) {
-  const name = pick(park.name, lang);
-  const district = pick(park.district, lang);
-  const desc = pick(park.description, lang);
-  const best = pick(park.bestTime, lang);
+/** helper: list normalize */
+const list = (v, lang) => {
+  const arr = Array.isArray(v) ? v : v?.[lang] || v?.en || [];
+  return (arr || []).map((x) => (typeof x === "string" ? x : pick(x, lang)));
+};
 
-  // safari types as readable text
-  const safariArr = Array.isArray(park.safariTypes)
-    ? park.safariTypes
-    : park.safariTypes?.[lang] || park.safariTypes?.en || [];
-  const safari = (safariArr || [])
-    .map((s) => (typeof s === "string" ? s : pick(s, lang)))
-    .join(", ");
+export default function ParkCard({ park, lang = "en" }) {
+  // labels (client-safe)
+  const L = {
+    bestTime: lang === "hi" ? "उत्तम समय" : "Best time",
+    safari: lang === "hi" ? "सफारी" : "Safari",
+    viewDetails: lang === "hi" ? "विवरण देखें" : "View details",
+  };
 
-  // ✅ नया: object-position को data से पढ़ो (fallback "50% 50%")
-  const objectPosition = park.imagePos || "50% 50%";
+  // localized values
+  const name = pick(park?.name, lang);
+  const district = pick(park?.district, lang);
+  const desc = pick(park?.description, lang);
+  const best = pick(park?.bestTime, lang);
+  const safariArr = list(park?.safariTypes, lang);
+
+  // image settings
+  const src = park?.image || "/images/parks/placeholder.jpg";
+  const pos = park?.imagePos || "50% 50%";
 
   return (
-    <motion.article
-      whileHover={{ y: -4 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
-    >
-      {/* Image */}
-      <div className="relative">
-        <img
-          src={park.image}
-          alt={name}
-          className="h-56 w-full object-cover"
-          style={{ objectPosition }}
+    <article className="group relative overflow-hidden rounded-2xl border border-emerald-900/20 bg-gradient-to-b from-emerald-900/20 to-emerald-900/5 shadow-lg backdrop-blur-sm">
+      {/* Image / Hover zoom */}
+      <div className="relative h-56 w-full overflow-hidden">
+        <motion.img
+          src={src}
+          alt={name || "Park image"}
+          className="h-full w-full object-cover"
+          style={{ objectPosition: pos }}
+          initial={{ scale: 1 }}
+          whileHover={{ scale: 1.06 }}
+          transition={{ type: "spring", stiffness: 120, damping: 18 }}
           loading="lazy"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-        <div className="absolute bottom-3 left-4 right-4 text-white drop-shadow">
-          <h3 className="text-lg font-semibold">{name}</h3>
-          <p className="text-sm opacity-90">{district}</p>
+        {/* bottom gradient for text legibility */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+        {/* Title overlay */}
+        <div className="absolute inset-x-4 bottom-3">
+          <h3 className="text-white text-lg font-semibold drop-shadow">
+            {name}
+          </h3>
+          {district ? (
+            <p className="text-white/85 text-sm drop-shadow">{district}</p>
+          ) : null}
         </div>
       </div>
 
       {/* Body */}
-      <div className="space-y-3 p-4">
-        {desc && (
-          <p className="line-clamp-3 text-[15px] leading-6 text-gray-700">
+      <div className="p-4">
+        {/* Description (short) */}
+        {desc ? (
+          <p className="line-clamp-2 text-emerald-50/90 text-sm">
             {desc}
           </p>
-        )}
+        ) : null}
 
-        <div className="mt-1 flex flex-wrap gap-2">
-          {best && (
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800">
+        {/* Badges */}
+        <div className="mt-3 flex flex-wrap gap-2">
+          {best ? (
+            <span className="rounded-full bg-emerald-100/90 px-3 py-1 text-xs text-emerald-900 ring-1 ring-emerald-700/20">
               {L.bestTime}: {best}
             </span>
-          )}
-          {safari && (
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800">
-              {L.safari}: {safari}
+          ) : null}
+
+          {safariArr.length > 0 ? (
+            <span className="rounded-full bg-emerald-100/90 px-3 py-1 text-xs text-emerald-900 ring-1 ring-emerald-700/20">
+              {L.safari}: {safariArr.join(", ")}
             </span>
-          )}
+          ) : null}
         </div>
 
-        <a
-          href={`/parks/${park.id}?lang=${lang}`}
-          className="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800"
-        >
-          {L.viewDetails} <span aria-hidden>→</span>
-        </a>
+        {/* CTA */}
+        <div className="mt-4">
+          <Link
+            href={`/parks/${park?.id}?lang=${lang}`}
+            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400/60"
+          >
+            {L.viewDetails}
+            <svg
+              className="h-4 w-4 opacity-90"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
       </div>
-    </motion.article>
+
+      {/* subtle rim light */}
+      <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/5" />
+    </article>
   );
 }
