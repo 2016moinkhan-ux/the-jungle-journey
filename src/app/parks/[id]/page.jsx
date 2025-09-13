@@ -5,10 +5,9 @@ import { notFound } from "next/navigation";
 import mpParks from "@/data/parks";
 import { LBL } from "@/i18n/lang";
 
-// small helpers
+// helpers
 const t = (val, lang) =>
   typeof val === "string" ? val : val?.[lang] ?? val?.en ?? "";
-
 const list = (val, lang) => {
   const arr =
     Array.isArray(val) ? val :
@@ -18,7 +17,7 @@ const list = (val, lang) => {
 };
 
 export default function ParkDetailPage({ params, searchParams }) {
-  // ✅ Next 15 safe: unwrap with use()
+  // ✅ Next 15 safe unwrap
   const pr = use(params);
   const sp = use(searchParams);
 
@@ -41,9 +40,9 @@ export default function ParkDetailPage({ params, searchParams }) {
   const gates = list(park.entryGates, lang);
   const wildlife = list(park.wildlife, lang);
 
-  const official = park.officialBooking;   // MPOnline / official portal
-  const website = park.website;            // park की अपनी site
-  const mapLink = park.mapLink;            // Google Maps
+  const official = park.officialBooking;
+  const website = park.website;
+  const mapLink = park.mapLink;
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
@@ -55,70 +54,83 @@ export default function ParkDetailPage({ params, searchParams }) {
         >
           ← {lang === "hi" ? "सभी पार्क" : "All Parks"}
         </Link>
-
-        <div className="text-sm opacity-80">
-          {lang === "hi" ? "The Jungle Journey" : "The Jungle Journey"}
-        </div>
+        <div className="text-sm opacity-80">The Jungle Journey</div>
       </div>
 
-      {/* Hero */}
+      {/* Hero card */}
       <section className="mx-auto max-w-6xl px-4">
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
-          {/* Image */}
-          <div className="aspect-[16/9] w-full overflow-hidden bg-black/50">
-            {/* public/images/parks/*.jpg से इमेज */}
+        <div className="overflow-hidden rounded-2xl card-surface">
+          {/* Image + overlay */}
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
             <img
               src={park.image}
               alt={name}
               className="h-full w-full object-cover"
               loading="eager"
             />
+
+            {/* dark gradient veil (readable text) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+
+            {/* Animated text overlay */}
+            <div className="absolute left-5 right-5 bottom-5 md:left-7 md:right-7 md:bottom-6">
+              <div className="fade-slide-in text-shadow-soft">
+                <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+                  {name}
+                </h1>
+                <p className="mt-1 text-sm md:text-base text-white/80">
+                  {district}
+                </p>
+
+                {/* Quick chips on image (optional, small) */}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {bestTime && (
+                    <span className="chip chip-glow">
+                      {lang === "hi" ? "उपयुक्त समय" : "Best time"}: {bestTime}
+                    </span>
+                  )}
+                  {!!safariTypes.length && (
+                    <span className="chip chip-glow">
+                      {lang === "hi" ? "सफारी" : "Safari"}: {safariTypes.join(", ")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Title + Buttons */}
-          <div className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight">
-                {name}
-              </h1>
-              <p className="mt-1 text-sm text-white/70">{district}</p>
-            </div>
-
-            {/* ✅ Buttons: जो लिंक होगा वही दिखेगा */}
-            <div className="flex flex-wrap items-center gap-2">
-              {official && (
-                <a
-                  href={official}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium hover:bg-emerald-500"
-                >
-                  {lang === "hi" ? "Official Permit" : "Official Permit"}
-                </a>
-              )}
-
-              {website && (
-                <a
-                  href={website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium hover:bg-indigo-500"
-                >
-                  {lang === "hi" ? "Park Website" : "Park Website"}
-                </a>
-              )}
-
-              {mapLink && (
-                <a
-                  href={mapLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-md bg-amber-600 px-3 py-2 text-sm font-medium hover:bg-amber-500"
-                >
-                  {lang === "hi" ? "Google Map" : "Google Map"}
-                </a>
-              )}
-            </div>
+          {/* Buttons row (stays below image) */}
+          <div className="flex flex-wrap items-center gap-2 p-5 md:items-center md:justify-end">
+            {official && (
+              <a
+                href={official}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium hover:bg-emerald-500"
+              >
+                {lang === "hi" ? "Official Permit" : "Official Permit"}
+              </a>
+            )}
+            {website && (
+              <a
+                href={website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium hover:bg-indigo-500"
+              >
+                {lang === "hi" ? "Park Website" : "Park Website"}
+              </a>
+            )}
+            {mapLink && (
+              <a
+                href={mapLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md bg-amber-600 px-3 py-2 text-sm font-medium hover:bg-amber-500"
+              >
+                {lang === "hi" ? "Google Map" : "Google Map"}
+              </a>
+            )}
           </div>
         </div>
       </section>
@@ -127,7 +139,7 @@ export default function ParkDetailPage({ params, searchParams }) {
       <section className="mx-auto max-w-6xl px-4 py-8">
         <div className="grid gap-6 md:grid-cols-2">
           {/* About */}
-          <article className="rounded-xl border border-white/10 bg-white/5 p-5">
+          <article className="card-surface p-6">
             <h2 className="mb-2 text-lg font-semibold">
               {lang === "hi" ? "परिचय" : "About"}
             </h2>
@@ -135,7 +147,7 @@ export default function ParkDetailPage({ params, searchParams }) {
           </article>
 
           {/* Quick facts */}
-          <article className="rounded-xl border border-white/10 bg-white/5 p-5">
+          <article className="card-surface p-6">
             <h2 className="mb-2 text-lg font-semibold">
               {lang === "hi" ? "मुख्य जानकारी" : "Quick Facts"}
             </h2>
@@ -156,9 +168,15 @@ export default function ParkDetailPage({ params, searchParams }) {
                     {lang === "hi" ? "समय:" : "Timings:"}
                   </span>{" "}
                   <span className="whitespace-pre-line">
-                    {timingsSummer && (lang === "hi" ? `गर्मी: ${timingsSummer}` : `Summer: ${timingsSummer}`)}
+                    {timingsSummer &&
+                      (lang === "hi"
+                        ? `गर्मी: ${timingsSummer}`
+                        : `Summer: ${timingsSummer}`)}
                     {timingsSummer && timingsWinter ? "\n" : ""}
-                    {timingsWinter && (lang === "hi" ? `सर्दी: ${timingsWinter}` : `Winter: ${timingsWinter}`)}
+                    {timingsWinter &&
+                      (lang === "hi"
+                        ? `सर्दी: ${timingsWinter}`
+                        : `Winter: ${timingsWinter}`)}
                   </span>
                 </li>
               )}

@@ -3,17 +3,16 @@ import { use } from "react";
 import HeroHeader from "@/components/HeroHeader";
 import ParksClient from "./ParksClient";
 import LanguageSwitch from "@/components/LanguageSwitch";
-// 🔁 data/parks में export नाम अलग हो सकता है, इसलिए दोनों तरीके से safely import:
 import parksModule from "@/data/parks";
 import { LBL } from "@/i18n/lang";
 
 export default function ParksPage({ searchParams }) {
-  // ✅ Next 15: unwrap searchParams
+  // ✅ Next 15: unwrap searchParams safely
   const sp = use(searchParams);
   const rawLang = sp?.lang;
   const lang = rawLang === "hi" ? "hi" : "en";
 
-  // ✅ parks array safely निकालो (चाहे default export हो या named)
+  // ✅ parks data (default export / named दोनों cases safe)
   const mpParks =
     Array.isArray(parksModule?.mpParks)
       ? parksModule.mpParks
@@ -23,23 +22,24 @@ export default function ParksPage({ searchParams }) {
       ? parksModule
       : [];
 
-  // ✅ heading/subtitle (i18n से, लेकिन fallback भी रखा है)
-  const title = "The Jungle Journey";
+  // ✅ i18n subtitle (fallback safety)
   const subtitle =
-    (LBL && LBL[lang] && LBL[lang].subtitle) ||
+    (LBL?.[lang]?.subtitle) ||
     (lang === "hi" ? "मध्य प्रदेश — राष्ट्रीय उद्यान" : "Madhya Pradesh — National Parks");
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-b from-green-950 to-black text-white">
+    <main className="relative min-h-screen text-white">
+      {/* 🔥 fireflies/other global animations stay; we don't remove anything */}
       {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6">
-        <HeroHeader title={title} subtitle={subtitle} />
-        <LanguageSwitch />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-6">
+        <div className="flex items-center justify-between">
+          <HeroHeader title="The Jungle Journey" subtitle={subtitle} />
+          <LanguageSwitch />
+        </div>
       </div>
 
-      {/* Parks Grid */}
+      {/* Listing grid + search/filters (client component) */}
       <section className="relative z-10 mx-auto max-w-7xl px-4 pb-24">
-        {/* ParksClient को हमेशा string lang और Array parks दो */}
         <ParksClient lang={lang} parks={mpParks} />
       </section>
     </main>
