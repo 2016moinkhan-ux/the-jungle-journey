@@ -1,56 +1,56 @@
 // src/data/parkLinks.js
-// Direct booking / official site links per park (HTTPS where possible)
+// Per-park direct safari site links (non-official portals)
+// Keep ids exactly same as in mpParks[].id
 
-export const bookingLinks = {
+const parkLinks = {
   kanha: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://www.kanhanationalparkonline.in/",
+    en: "https://www.kanhanationalparkonline.in",
+    hi: "https://www.kanhanationalparkonline.in",
   },
-  bandhavgah: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://www.bandhavgarhnationalpark.in/",
+  bandhavgarh: {
+    en: "https://www.bandhavgarhnationalpark.in",
+    hi: "https://www.bandhavgarhnationalpark.in",
   },
   pench: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://www.penchnationalparkonline.in/",
+    en: "https://www.penchnationalparkonline.in",
+    hi: "https://www.penchnationalparkonline.in",
   },
   satpura: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://www.satpuranationalparkonline.in/",
+    en: "https://www.satpuranationalparkonline.in",
+    hi: "https://www.satpuranationalparkonline.in",
   },
   panna: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://www.pannanationalparkonline.in/",
+    en: "https://www.pannanationalparkonline.in",
+    hi: "https://www.pannanationalparkonline.in",
   },
   sanjayDubri: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://mpforest.co.in/", // info/packaged bookings
+    en: "https://mpforest.co.in",
+    hi: "https://mpforest.co.in",
   },
   kuno: {
-    officialBooking: "https://www.kunonationalpark.org/",
-    parkSite: "https://www.kunonationalpark.org/",
+    en: "https://www.kunonationalpark.org",
+    hi: "https://www.kunonationalpark.org",
   },
   vanVihar: {
-    officialBooking: "https://vanviharnationalpark.org/",
-    parkSite: "https://vanviharnationalpark.org/",
+    en: "https://vanviharnationalpark.org",
+    hi: "https://vanviharnationalpark.org",
   },
   gandhiSagar: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://wildtrails.in/gandhi-sagar-wildlife-sanctuary/", // info page
+    en: "https://wildtrails.in/india/madhya-pradesh/gandhi-sagar-wildlife-sanctuary/",
+    hi: "https://wildtrails.in/india/madhya-pradesh/gandhi-sagar-wildlife-sanctuary/",
   },
   nauradehi: {
-    officialBooking: "https://forest.mponline.gov.in/",
-    parkSite: "https://nauradehiwls.in/",
+    en: "https://nauradehiwls.in",
+    hi: "https://nauradehiwls.in",
   },
   madhav: {
-    officialBooking: "https://madhavnationalpark.org/",
-    parkSite: "https://madhavnationalpark.org/",
+    en: "https://madhavnationalpark.org",
+    hi: "https://madhavnationalpark.org",
   },
   dinosaur: {
-    officialBooking: "https://dhar.nic.in/",
-    parkSite: "https://dindori.nic.in/", // Ghughwa fossil park district site
+    en: "https://dhar.nic.in/en/tourist-place/dinosaur-fossil-park-bagh/",
+    hi: "https://dhar.nic.in/hi/tourist-place/dinosaur-fossil-park-bagh/",
   },
 };
 
-// Default export for easy import
-export default bookingLinks;
+export default parkLinks;
