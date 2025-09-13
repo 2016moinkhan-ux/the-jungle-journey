@@ -1,309 +1,416 @@
 // src/data/parks.js
-// ✅ Madhya Pradesh parks data (EN+HI). Safe shapes for UI.
+// ✅ Madhya Pradesh parks data (EN+HI). All list fields are arrays.
+// ✅ Consistent schema so pages can safely .join(", ") without crashes.
 
-const mpParks = [
+export const mpParks = [
   {
     id: "kanha",
     image: "/images/parks/kanha.jpg",
     imagePos: "50% 35%",
     name: { en: "Kanha National Park", hi: "कान्हा राष्ट्रीय उद्यान" },
-    district: { en: "Mandla / Balaghat", hi: "मंडला / बालाघाट" },
+    district: { en: "Mandla / Balaghat (MP)", hi: "मंडला / बालाघाट (म.प्र.)" },
     description: {
       en: "India’s best-managed tiger reserve; sal forests and wide meadows with the world’s only hard-ground barasingha.",
-      hi: "भारत के सबसे बेहतर प्रबंधित बाघ अभयारण्यों में से एक—साल के जंगल और चौड़े मैदान; विश्व की एकमात्र कठोर-भूमि बारासिंगा आबादी।",
+      hi: "भारत के सबसे बेहतर प्रबंधित टाइगर रिज़र्व में से एक; सख्त भू-भाग बारहसिंगा, साल वन और चौड़ी घासभूमियाँ।",
     },
-    bestTime: { en: "Oct–Jun (Feb–May peak)", hi: "अक्टूबर–जून (फ़रवरी–मई सर्वोत्तम)" },
-    safariTypes: { en: ["Jeep", "Canter", "Night (limited)"], hi: ["जीप", "कैंटर", "रात्रि (सीमित)"] },
-    zones: { en: ["Kisli", "Mukki", "Kanha", "Sarhi"], hi: ["किसली", "मुकी", "कान्हा", "सरही"] },
-    entryGates: { en: ["Khatia", "Mukki", "Kanha Gate", "Sarhi"], hi: ["खटिया", "मुकी", "कान्हा गेट", "सरही"] },
+    bestTime: { en: "Oct–Jun (Feb–May peak)", hi: "अक्टूबर–जून (फर.–मई पीक)" },
+    safariTypes: {
+      en: ["Jeep", "Canter", "Night (limited)"],
+      hi: ["जीप", "कैंटर", "नाइट (सीमित)"],
+    },
+    zones: {
+      en: ["Kisli", "Mukki", "Kanha", "Sarhi"],
+      hi: ["किसली", "मुक्की", "कान्हा", "सरही"],
+    },
+    entryGates: {
+      en: ["Khatia", "Mukki", "Kanha Gate", "Sarhi"],
+      hi: ["खटिया", "मुक्की", "कान्हा गेट", "सरही"],
+    },
     timings: {
-      summer: { en: "≈ 5:30–10:30 & 3:30–6:30", hi: "≈ 5:30–10:30 व 3:30–6:30" },
-      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 व 2:30–5:30" },
+      summer: { en: "≈ 5:30–10:30 & 3:00–6:30", hi: "≈ 5:30–10:30 & 3:00–6:30" },
+      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 & 2:30–5:30" },
     },
     wildlife: {
       en: ["Tiger", "Barasingha", "Leopard", "Sloth bear", "Wild dog", "Gaur"],
-      hi: ["बाघ", "बारासिंगा", "तेंदुआ", "भालू", "जंगली कुत्ता", "गौर"],
+      hi: ["बाघ", "बारहसिंगा", "तेंदुआ", "भालू", "जंगली कुत्ता", "गौर"],
     },
     howToReach: {
       en: "Rail: Gondia/Jabalpur. Air: Jabalpur (~160 km), Nagpur (~260 km).",
-      hi: "रेल: गोंदिया/जबलपुर। वायु: जबलपुर (~160 किमी), नागपुर (~260 किमी)।",
+      hi: "रेल: गोंदिया/जबलपुर. हवाई: जबलपुर (~160 किमी), नागपुर (~260 किमी).",
     },
+    officialBooking: "https://forest.mponline.gov.in/",
+    parkWebsite: "https://www.kanhanationalparkonline.in/",
+    googleMap: "https://maps.google.com/?q=Kanha+National+Park",
   },
 
   {
     id: "bandhavgarh",
     image: "/images/parks/bandhavgarh.jpg",
-    imagePos: "50% 30%",
+    imagePos: "50% 28%",
     name: { en: "Bandhavgarh National Park", hi: "बांधवगढ़ राष्ट्रीय उद्यान" },
-    district: { en: "Umaria", hi: "उमरिया" },
+    district: { en: "Umaria (MP)", hi: "उमरिया (म.प्र.)" },
     description: {
       en: "High tiger density; sal–bamboo forests and the ancient Bandhavgarh Fort.",
-      hi: "उच्च बाघ घनत्व; साल–बाँस के वन और प्राचीन बांधवगढ़ किला।",
+      hi: "उच्च बाघ घनत्व; साल-बाँस वन और प्राचीन बांधवगढ़ किला।",
     },
-    bestTime: { en: "Oct–Jun (Feb–May best)", hi: "अक्टूबर–जून (फ़रवरी–मई सर्वोत्तम)" },
-    safariTypes: { en: ["Jeep", "Canter"], hi: ["जीप", "कैंटर"] },
-    zones: { en: ["Tala", "Magadhi", "Khitauli"], hi: ["ताला", "मगधी", "खितौली"] },
-    entryGates: { en: ["Tala", "Magadhi", "Khitauli"], hi: ["ताला", "मगधी", "खितौली"] },
+    bestTime: { en: "Oct–Jun (Feb–May best)", hi: "अक्टूबर–जून (फर.–मई श्रेष्ठ)" },
+    safariTypes: {
+      en: ["Jeep", "Canter"],
+      hi: ["जीप", "कैंटर"],
+    },
+    zones: {
+      en: ["Tala", "Magadhi", "Khitauli"],
+      hi: ["ताला", "मगधि", "खितौली"],
+    },
+    entryGates: {
+      en: ["Tala", "Magadhi", "Khitauli"],
+      hi: ["ताला", "मगधि", "खितौली"],
+    },
     timings: {
-      summer: { en: "≈ 5:30–10:00 & 3:30–6:30", hi: "≈ 5:30–10:00 व 3:30–6:30" },
-      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 व 2:30–5:30" },
+      summer: { en: "≈ 5:30–10:00 & 3:00–6:30", hi: "≈ 5:30–10:00 & 3:00–6:30" },
+      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 & 2:30–5:30" },
     },
     wildlife: {
-      en: ["Tiger", "Leopard", "Sloth bear", "Gaur", "Sambar"],
-      hi: ["बाघ", "तेंदुआ", "भालू", "गौर", "सांभर"],
+      en: ["Tiger", "Leopard", "Sloth bear", "Wild dog", "Gaur", "Chital", "Birds"],
+      hi: ["बाघ", "तेंदुआ", "भालू", "जंगली कुत्ता", "गौर", "चितल", "पक्षी"],
     },
     howToReach: {
-      en: "Rail: Umaria/Katni. Air: Jabalpur (~165 km).",
-      hi: "रेल: उमरिया/कटनी। वायु: जबलपुर (~165 किमी)।",
+      en: "Rail/Air: Jabalpur/Katni (nearest railheads).",
+      hi: "रेल/हवाई: जबलपुर/कटनी (निकटतम).",
     },
+    officialBooking: "https://forest.mponline.gov.in/",
+    parkWebsite: "https://www.bandhavgarhnationalpark.in/",
+    googleMap: "https://maps.google.com/?q=Bandhavgarh+National+Park",
   },
 
   {
     id: "pench",
     image: "/images/parks/pench.jpg",
-    imagePos: "50% 38%",
+    imagePos: "50% 35%",
     name: { en: "Pench National Park", hi: "पेंच राष्ट्रीय उद्यान" },
-    district: { en: "Seoni / Chhindwara", hi: "सीनी / छिंदवाड़ा" },
+    district: { en: "Seoni / Chhindwara (MP)", hi: "सिवनी / छिंदवाड़ा (म.प्र.)" },
     description: {
       en: "Inspiration for ‘The Jungle Book’; teak & mixed forests with multiple gates.",
-      hi: "‘द जंगल बुक’ की प्रेरणा; सागौन व मिश्रित वन, कई प्रवेश द्वार।",
+      hi: "‘द जंगल बुक’ की प्रेरणा; सागौन व मिश्रित वन, कई प्रवेश द्वारों के साथ।",
     },
     bestTime: { en: "Oct–Jun", hi: "अक्टूबर–जून" },
-    safariTypes: { en: ["Jeep", "Canter", "Boat"], hi: ["जीप", "कैंटर", "नौका"] },
-    zones: { en: ["Turia", "Karmajhiri", "Jamtara"], hi: ["तुरिया", "कर्माझीरी", "जमतरा"] },
-    entryGates: { en: ["Turia", "Karmajhiri", "Jamtara"], hi: ["तुरिया", "कर्माझीरी", "जमतरा"] },
+    safariTypes: { en: ["Jeep", "Canter", "Boat"], hi: ["जीप", "कैंटर", "नाव"] },
+    zones: {
+      en: ["Turia", "Karmajhiri", "Jamtara"],
+      hi: ["तुरिया", "करमाझिरी", "जामतारा"],
+    },
+    entryGates: {
+      en: ["Turia", "Karmajhiri", "Jamtara"],
+      hi: ["तुरिया", "करमाझिरी", "जामतारा"],
+    },
     timings: {
-      summer: { en: "≈ 5:30–10:00 & 3:30–6:30", hi: "≈ 5:30–10:00 व 3:30–6:30" },
-      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 व 2:30–5:30" },
+      summer: { en: "≈ 5:30–10:00 & 3:00–6:30", hi: "≈ 5:30–10:00 & 3:00–6:30" },
+      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 & 2:30–5:30" },
     },
     wildlife: {
-      en: ["Tiger", "Leopard", "Wild dog", "Sambar", "Gaur"],
-      hi: ["बाघ", "तेंदुआ", "जंगली कुत्ता", "सांभर", "गौर"],
+      en: ["Tiger", "Leopard", "Wild dog", "Sambar", "Gaur", "Birds"],
+      hi: ["बाघ", "तेंदुआ", "जंगली कुत्ता", "सांभर", "गौर", "पक्षी"],
     },
     howToReach: {
-      en: "Rail: Seoni/Chhindwara/Nagpur. Air: Nagpur (~90–130 km).",
-      hi: "रेल: सीनी/छिंदवाड़ा/नागपुर। वायु: नागपुर (~90–130 किमी)।",
+      en: "Air: Nagpur. Rail: Seoni/Chhindwara/Nagpur.",
+      hi: "हवाई: नागपुर. रेल: सिवनी/छिंदवाड़ा/नागपुर।",
     },
+    officialBooking: "https://forest.mponline.gov.in/",
+    parkWebsite: "https://www.penchnationalparkonline.in/",
+    googleMap: "https://maps.google.com/?q=Pench+National+Park",
   },
 
   {
     id: "satpura",
     image: "/images/parks/satpura.jpg",
-    imagePos: "50% 30%",
-    name: { en: "Satpura National Park", hi: "सतपुड़ा राष्ट्रीय उद्यान" },
-    district: { en: "Narmadapuram (Hoshangabad)", hi: "नर्मदापुरम (होशंगाबाद)" },
+    imagePos: "50% 36%",
+    name: { en: "Satpura Tiger Reserve", hi: "सतपुड़ा टाइगर रिज़र्व" },
+    district: { en: "Hoshangabad (Narmadapuram)", hi: "होशंगाबाद (नर्मदापुरम)" },
     description: {
-      en: "Hills & reservoirs; unique boat, walking and canoe experiences (as per zone).",
-      hi: "पहाड़ियां व जलाशय; बोट, वॉकिंग और केनू जैसे अनूठे अनुभव (ज़ोन अनुसार)।",
+      en: "Best known for canoe & walking safaris; rugged hills and diverse wildlife.",
+      hi: "कैनो/वॉकिंग सफारी के लिए प्रसिद्ध; दुर्गम पहाड़ियाँ और विविध वन्यजीव।",
     },
-    bestTime: { en: "Oct–Jun", hi: "अक्टूबर–जून" },
-    safariTypes: { en: ["Jeep", "Boat", "Walk"], hi: ["जीप", "नौका", "पैदल"] },
-    zones: { en: ["Madhai", "Churna"], hi: ["माधई", "चूर्णा"] },
-    entryGates: { en: ["Madhai", "Churna"], hi: ["माधई", "चूर्णा"] },
+    bestTime: { en: "Oct–Apr", hi: "अक्टूबर–अप्रैल" },
+    safariTypes: {
+      en: ["Jeep", "Boat (seasonal)", "Walking (guided)"],
+      hi: ["जीप", "नाव (मौसमी)", "वॉकिंग (गाइडेड)"],
+    },
+    zones: { en: ["Core & buffer ranges"], hi: ["कोर व बफर रेंज"] },
+    entryGates: { en: ["Near Madhai", "Pachmarhi"], hi: ["मधाई के पास", "पचमढ़ी"] },
     timings: {
-      summer: { en: "≈ 5:30–10:00 & 3:30–6:30", hi: "≈ 5:30–10:00 व 3:30–6:30" },
-      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 व 2:30–5:30" },
+      summer: { en: "As per field range", hi: "रेंज अनुसार" },
+      winter: { en: "As per field range", hi: "रेंज अनुसार" },
     },
     wildlife: {
-      en: ["Leopard", "Sloth bear", "Crocodile", "Gaur"],
-      hi: ["तेंदुआ", "भालू", "मगर", "गौर"],
+      en: ["Leopard", "Sloth bear", "Gaur", "Malabar giant squirrel", "Birds"],
+      hi: ["तेंदुआ", "भालू", "गौर", "मालाबार जायंट स्क्विरेल", "पक्षी"],
     },
     howToReach: {
-      en: "Rail: Pipariya/Itarsi. Air: Bhopal (~150 km).",
-      hi: "रेल: पिपरिया/इटारसी। वायु: भोपाल (~150 किमी)।",
+      en: "Road via Hoshangabad/Pipariya; nearest rail Pipariya/Itarsi.",
+      hi: "सड़क: होशंगाबाद/पिपरिया; रेल: पिपरिया/इटारसी।",
     },
+    officialBooking: "https://forest.mponline.gov.in/",
+    parkWebsite: "https://www.satpuranationalparkonline.in/",
+    googleMap: "https://maps.google.com/?q=Satpura+Tiger+Reserve",
   },
 
   {
     id: "panna",
     image: "/images/parks/panna.jpg",
-    imagePos: "50% 32%",
+    imagePos: "50% 35%",
     name: { en: "Panna National Park", hi: "पन्ना राष्ट्रीय उद्यान" },
-    district: { en: "Panna / Chhatarpur", hi: "पन्ना / छतरपुर" },
+    district: { en: "Panna / Chhatarpur (MP)", hi: "पन्ना / छतरपुर (म.प्र.)" },
     description: {
-      en: "Ken river plateaus & teak forests; gharial sanctuary and scenic gorges.",
-      hi: "केन नदी के पठार व सागौन वन; घड़ियाल अभयारण्य और सुरम्य घाटियाँ।",
+      en: "Ken river, deep gorges and rich bird life; both jeep & boat safaris.",
+      hi: "केन नदी, गहरी घाटियाँ और समृद्ध पक्षी जीवन; जीप व नाव सफारी।",
     },
     bestTime: { en: "Nov–Mar", hi: "नवंबर–मार्च" },
-    safariTypes: { en: ["Jeep", "Boat"], hi: ["जीप", "नौका"] },
-    zones: { en: ["Madla", "Hinauta"], hi: ["मडला", "हिनौता"] },
+    safariTypes: { en: ["Jeep", "Boat"], hi: ["जीप", "नाव"] },
+    zones: { en: ["Madla", "Hinauta", "Akola (buffer)"], hi: ["मडला", "हिनौता", "अकोला (बफर)"] },
     entryGates: { en: ["Madla", "Hinauta"], hi: ["मडला", "हिनौता"] },
     timings: {
-      summer: { en: "≈ 5:30–10:00 & 3:30–6:30", hi: "≈ 5:30–10:00 व 3:30–6:30" },
-      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 व 2:30–5:30" },
+      summer: { en: "≈ 5:30–10:00 & 3:00–6:30", hi: "≈ 5:30–10:00 & 3:00–6:30" },
+      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 & 2:30–5:30" },
     },
     wildlife: {
-      en: ["Tiger", "Leopard", "Gharial", "Vulture"],
-      hi: ["बाघ", "तेंदुआ", "घड़ियाल", "गिद्ध"],
+      en: ["Tiger", "Leopard", "Crocodile", "Vulture", "Birds"],
+      hi: ["बाघ", "तेंदुआ", "घड़ियाल/मगर", "गिद्ध", "पक्षी"],
     },
     howToReach: {
-      en: "Rail/Air: Khajuraho (~25 km). Road via Panna/Chhatarpur.",
-      hi: "रेल/वायु: खजुराहो (~25 किमी)। सड़क: पन्ना/छतरपुर से।",
+      en: "Rail: Khajuraho/Satna; Air: Khajuraho.",
+      hi: "रेल: खजुराहो/सतना; हवाई: खजुराहो।",
     },
+    officialBooking: "https://forest.mponline.gov.in/",
+    parkWebsite: "https://www.pannanationalparkonline.in/",
+    googleMap: "https://maps.google.com/?q=Panna+National+Park",
   },
 
   {
-    id: "sanjay-dubri",
+    id: "sanjayDubri",
     image: "/images/parks/sanjay-dubri.jpg",
-    imagePos: "50% 32%",
-    name: { en: "Sanjay–Dubri Tiger Reserve", hi: "संजय–दुबरी टाइगर रिज़र्व" },
-    district: { en: "Sidhi / Singrauli", hi: "सीधी / सिंगरौली" },
-    description: {
-      en: "Quiet sal forests and meadow landscapes; offbeat yet rewarding.",
-      hi: "शांत साल वन और ढलवां घासभूमि; ऑफबीट पर फलदायी।",
-    },
-    bestTime: { en: "Nov–Apr", hi: "नवंबर–अप्रैल" },
-    safariTypes: { en: ["Jeep"], hi: ["जीप"] },
-    zones: { en: ["Sanjay", "Dubri"], hi: ["संजय", "दुबरी"] },
-    entryGates: { en: ["Sanjay", "Dubri"], hi: ["संजय", "दुबरी"] },
-    timings: {
-      summer: { en: "≈ 5:30–10:00 & 3:30–6:30", hi: "≈ 5:30–10:00 व 3:30–6:30" },
-      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 व 2:30–5:30" },
-    },
-    wildlife: {
-      en: ["Tiger", "Leopard", "Sloth bear", "Chital", "Sambar"],
-      hi: ["बाघ", "तेंदुआ", "भालू", "चितल", "सांभर"],
-    },
-    howToReach: {
-      en: "Rail: Rewa/Sidhi/Singrauli. Air: Jabalpur/Prayagraj.",
-      hi: "रेल: रीवा/सीधी/सिंगरौली। वायु: जबलपुर/प्रयागराज।",
-    },
-  },
-
-  {
-    id: "nauradehi",
-    image: "/images/parks/nauradehi.jpg",
     imagePos: "50% 28%",
-    name: { en: "Nauradehi Wildlife Sanctuary", hi: "नौरादेही अभयारण्य" },
-    district: { en: "Sagar / Damoh", hi: "सागर / दमोह" },
+    name: { en: "Sanjay-Dubri Tiger Reserve", hi: "संजय-डुबरी टाइगर रिज़र्व" },
+    district: { en: "Sidhi & Singrauli (MP)", hi: "सीधी व सिंगरौली (म.प्र.)" },
     description: {
-      en: "Large dry-deciduous mosaic with grasslands; good for herbivores & birds.",
-      hi: "शुष्क पर्णपाती वन व घासभूमियों का विशाल मिश्रण; शाकाहारी व पक्षियों के लिए अच्छा।",
+      en: "Large sal forests; quieter tourism with good leopard & bird sightings.",
+      hi: "विस्तृत साल वन; कम भीड़ वाला पर्यटन, तेंदुए व पक्षियों के अच्छे दर्शन।",
     },
     bestTime: { en: "Nov–Mar", hi: "नवंबर–मार्च" },
     safariTypes: { en: ["Jeep"], hi: ["जीप"] },
-    zones: { en: ["Ghogra", "Singpur"], hi: ["घोगरा", "सिंगपुर"] },
-    entryGates: { en: ["Ghogra", "Singpur"], hi: ["घोगरा", "सिंगपुर"] },
+    zones: { en: ["Dubri range & buffers"], hi: ["डुबरी रेंज व बफ़र्स"] },
+    entryGates: { en: ["Near Sidhi / Beohari"], hi: ["सीधी/बिओहारी के पास"] },
     timings: {
-      summer: { en: "≈ 5:30–10:00 & 3:30–6:30", hi: "≈ 5:30–10:00 व 3:30–6:30" },
-      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 व 2:30–5:30" },
+      summer: { en: "Field-range timings", hi: "रेंज अनुसार" },
+      winter: { en: "Field-range timings", hi: "रेंज अनुसार" },
     },
     wildlife: {
-      en: ["Chital", "Nilgai", "Blackbuck (patches)", "Birds"],
-      hi: ["चितल", "नीलगाय", "काला हिरन (कुछ क्षेत्र)", "पक्षी"],
+      en: ["Tiger", "Leopard", "Sloth bear", "Chital", "Birds"],
+      hi: ["बाघ", "तेंदुआ", "भालू", "चितल", "पक्षी"],
     },
     howToReach: {
-      en: "Rail: Sagar/Damoh.",
-      hi: "रेल: सागर/दमोह।",
+      en: "Rail: Rewa/Anuppur/Singrauli; nearest airports Jabalpur/Prayagraj.",
+      hi: "रेल: रीवा/अनूपपुर/सिंगरौली; हवाई: जबलपुर/प्रयागराज।",
     },
-  },
-
-  {
-    id: "gandhi-sagar",
-    image: "/images/parks/gandhi-sagar.jpg",
-    imagePos: "50% 34%",
-    name: { en: "Gandhi Sagar Wildlife Sanctuary", hi: "गांधी सागर अभयारण्य" },
-    district: { en: "Mandsaur / Neemuch", hi: "मंदसौर / नीमच" },
-    description: {
-      en: "Chambal ravines and teak forests around the reservoir; scenic drives and birding.",
-      hi: "गांधी सागर जलाशय के आसपास चंबल की बीहड़ व सागौन वन; सुहाने ड्राइव और बर्डिंग।",
-    },
-    bestTime: { en: "Nov–Feb", hi: "नवंबर–फ़रवरी" },
-    safariTypes: { en: ["Jeep"], hi: ["जीप"] },
-    zones: { en: ["Left Bank", "Right Bank"], hi: ["लेफ्ट बैंक", "राइट बैंक"] },
-    entryGates: { en: ["Rampura", "Bhanpura"], hi: ["रामपुरा", "भानपुरा"] },
-    timings: {
-      summer: { en: "As per local range", hi: "स्थानीय रेंज समय" },
-      winter: { en: "As per local range", hi: "स्थानीय रेंज समय" },
-    },
-    wildlife: {
-      en: ["Chinkara", "Nilgai", "Crocodile", "Birds"],
-      hi: ["चिंकाड़ा", "नीलगाय", "मगर", "पक्षी"],
-    },
-    howToReach: {
-      en: "Rail: Mandsaur/Neemuch.",
-      hi: "रेल: मंदसौर/नीमच।",
-    },
-  },
-
-  {
-    id: "van-vihar",
-    image: "/images/parks/van-vihar.jpg",
-    imagePos: "50% 32%",
-    name: { en: "Van Vihar National Park (Bhopal)", hi: "वन विहार राष्ट्रीय उद्यान (भोपाल)" },
-    district: { en: "Bhopal", hi: "भोपाल" },
-    description: {
-      en: "Urban park around the Upper Lake; easy access, birding and rescued fauna enclosures.",
-      hi: "ऊपरी झील के किनारे शहरी उद्यान; आसान पहुँच, बर्डिंग व रेस्क्यूड जीवों के बाड़े।",
-    },
-    bestTime: { en: "Oct–Mar", hi: "अक्टूबर–मार्च" },
-    safariTypes: { en: ["Battery cart / Cycle"], hi: ["बैटरी कार्ट / साइकिल"] },
-    zones: { en: ["Lake belt", "Forest trail"], hi: ["झील पट्टी", "वन पथ"] },
-    entryGates: { en: ["VIP Road Gate", "Bhadbhada"], hi: ["वीआईपी रोड गेट", "भदभदा"] },
-    timings: {
-      summer: { en: "Day entry (park hours)", hi: "दिन में प्रवेश (पार्क समय)" },
-      winter: { en: "Day entry (park hours)", hi: "दिन में प्रवेश (पार्क समय)" },
-    },
-    wildlife: {
-      en: ["Birds", "Crocodile", "Rescued carnivores (enclosures)"],
-      hi: ["पक्षी", "मगर", "रेस्क्यू carnivores (बाड़े)"],
-    },
-    howToReach: {
-      en: "Within Bhopal city limits.",
-      hi: "भोपाल शहर के भीतर।",
-    },
+    officialBooking: "https://forest.mponline.gov.in/",
+    parkWebsite: "https://mpforest.co.in/",
+    googleMap: "https://maps.google.com/?q=Sanjay+Dubri+Tiger+Reserve",
   },
 
   {
     id: "kuno",
     image: "/images/parks/kuno.jpg",
-    imagePos: "50% 26%",
+    imagePos: "50% 45%",
     name: { en: "Kuno National Park", hi: "कूनो राष्ट्रीय उद्यान" },
-    district: { en: "Sheopur", hi: "श्योपुर" },
+    district: { en: "Sheopur (MP)", hi: "श्योपुर (म.प्र.)" },
     description: {
-      en: "Arid forests and grasslands along the Kuno river; known for cheetah reintroduction.",
-      hi: "कूनो नदी के किनारे शुष्क वन व घासभूमि; चीता पुनर्परिचय के लिए प्रसिद्ध।",
+      en: "Riverine woodlands and savanna; known for the Cheetah reintroduction site.",
+      hi: "नदी-तटीय वन व सवाना; चीता पुनर्स्थापन के लिए प्रसिद्ध।",
+    },
+    bestTime: { en: "Oct–Mar", hi: "अक्टूबर–मार्च" },
+    safariTypes: { en: ["Jeep"], hi: ["जीप"] },
+    zones: { en: ["Ahera, PeepalBawadi (etc.)"], hi: ["अहेड़ा, पीपलबावड़ी आदि"] },
+    entryGates: { en: ["Tiktoli", "Ahera side"], hi: ["टिकटोली", "अहेड़ा साइड"] },
+    timings: {
+      summer: { en: "≈ 5:30–10:00 & 3:00–6:30", hi: "≈ 5:30–10:00 & 3:00–6:30" },
+      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 & 2:30–5:30" },
+    },
+    wildlife: {
+      en: ["Leopard", "Hyena", "Chinkara", "Nilgai", "Birds"],
+      hi: ["तेंदुआ", "लकड़बग्घा", "चिंकारा", "नीलगाय", "पक्षी"],
+    },
+    howToReach: {
+      en: "Nearest rail: Sheopur/Kailaras; Air: Gwalior/Jaipur.",
+      hi: "रेल: श्योपुर/कैलाईरस; हवाई: ग्वालियर/जयपुर।",
+    },
+    officialBooking: "https://www.kunonationalpark.org/",
+    parkWebsite: "https://mpforest.co.in/",
+    googleMap: "https://maps.google.com/?q=Kuno+National+Park",
+  },
+
+  {
+    id: "vanVihar",
+    image: "/images/parks/van-vihar.jpg",
+    imagePos: "50% 40%",
+    name: { en: "Van Vihar National Park (Bhopal)", hi: "वन विहार राष्ट्रीय उद्यान (भोपाल)" },
+    district: { en: "Bhopal (MP)", hi: "भोपाल (म.प्र.)" },
+    description: {
+      en: "Urban national park & zoo along Bhopal’s Upper Lake; popular for easy wildlife viewing and cycling tracks.",
+      hi: "भोपाल की ऊपरी झील किनारे स्थित शहरी राष्ट्रीय उद्यान एवं चिड़ियाघर; सरल वन्यजीव दर्शन व साइक्लिंग ट्रैक।",
+    },
+    bestTime: { en: "Round the year", hi: "पूरे वर्ष" },
+    safariTypes: { en: ["Battery carts", "Cycles (rental)"], hi: ["बैटरी कार्ट", "साइकिल (किराया)"] },
+    zones: { en: ["Zoo & rescue enclosures"], hi: ["चिड़ियाघर व रेस्क्यू एनक्लोज़र"] },
+    entryGates: { en: ["Lake View gate"], hi: ["लेक व्यू गेट"] },
+    timings: {
+      summer: { en: "As per park schedule", hi: "पार्क समयानुसार" },
+      winter: { en: "As per park schedule", hi: "पार्क समयानुसार" },
+    },
+    wildlife: {
+      en: ["Tiger (rescued)", "Leopard", "Bear", "Herbivores", "Birds"],
+      hi: ["बाघ (रेस्क्यू)", "तेंदुआ", "भालू", "शाकाहारी", "पक्षी"],
+    },
+    howToReach: {
+      en: "Inside Bhopal city, near Upper Lake.",
+      hi: "भोपाल शहर में, ऊपरी झील के पास।",
+    },
+    officialBooking: "https://vanviharnationalpark.org/",
+    parkWebsite: "https://vanviharnationalpark.org/",
+    googleMap: "https://maps.google.com/?q=Van+Vihar+Bhopal",
+  },
+
+  {
+    id: "gandhiSagar",
+    image: "/images/parks/gandhi-sagar.jpg",
+    imagePos: "50% 36%",
+    name: { en: "Gandhi Sagar Wildlife Sanctuary", hi: "गांधी सागर अभयारण्य" },
+    district: { en: "Mandsaur & Neemuch (MP)", hi: "मंदसौर व नीमच (म.प्र.)" },
+    description: {
+      en: "Located along the Chambal; dry deciduous habitats with antelopes & birds.",
+      hi: "चंबल किनारे स्थित; शुष्क पर्णपाती वन, मृग-हिरण व पक्षियों की अच्छी विविधता।",
+    },
+    bestTime: { en: "Nov–Mar", hi: "नवंबर–मार्च" },
+    safariTypes: { en: ["Jeep (limited)"], hi: ["जीप (सीमित)"] },
+    zones: { en: ["Core & buffer ranges"], hi: ["कोर व बफ़र रेंज"] },
+    entryGates: { en: ["Near Gandhi Sagar dam side"], hi: ["गांधीसागर बाँध साइड"] },
+    timings: {
+      summer: { en: "As per field range", hi: "रेंज अनुसार" },
+      winter: { en: "As per field range", hi: "रेंज अनुसार" },
+    },
+    wildlife: {
+      en: ["Chinkara", "Blue bull", "Wild boar", "Crocodile", "Birds"],
+      hi: ["चिंकारा", "नीलगाय", "जंगली सूअर", "घड़ियाल/मगर", "पक्षी"],
+    },
+    howToReach: {
+      en: "Road via Mandsaur/Neemuch.",
+      hi: "सड़क मार्ग: मंदसौर/नीमच।",
+    },
+    officialBooking: "https://forest.mponline.gov.in/",
+    parkWebsite: "https://wildtrails.in/",
+    googleMap: "https://maps.google.com/?q=Gandhi+Sagar+Wildlife+Sanctuary",
+  },
+
+  {
+    id: "nauradehi",
+    image: "/images/parks/nauradehi.jpg",
+    imagePos: "50% 40%",
+    name: { en: "Nauradehi Wildlife Sanctuary", hi: "नौरादेही अभयारण्य" },
+    district: { en: "Sagar / Damoh / Narsinghpur (MP)", hi: "सागर / दमोह / नरसिंहपुर (म.प्र.)" },
+    description: {
+      en: "Central India’s large sanctuary with rolling grasslands and woodlands.",
+      hi: "मध्य भारत का विशाल अभयारण्य—लहराते घासभूमि एवं वन भूमि।",
+    },
+    bestTime: { en: "Nov–Mar", hi: "नवंबर–मार्च" },
+    safariTypes: { en: ["Jeep (by range)"], hi: ["जीप (रेंज अनुसार)"] },
+    zones: { en: ["Multiple ranges"], hi: ["अनेक रेंज"] },
+    entryGates: { en: ["Range HQ contacts"], hi: ["रेंज मुख्यालय से प्रवेश"] },
+    timings: {
+      summer: { en: "As per field range", hi: "रेंज अनुसार" },
+      winter: { en: "As per field range", hi: "रेंज अनुसार" },
+    },
+    wildlife: {
+      en: ["Leopard", "Wolf (patchy)", "Chinkara", "Blackbuck (reintroduced spots)", "Birds"],
+      hi: ["तेंदुआ", "भेड़िया (स्थानीय)", "चिंकारा", "काला हिरण (कुछ हिस्से)", "पक्षी"],
+    },
+    howToReach: {
+      en: "Reach via Sagar/Damoh; coordinate with sanctuary office.",
+      hi: "सागर/दमोह मार्ग से; अभयारण्य कार्यालय से समन्वय करें।",
+    },
+    officialBooking: "https://nauradehiwls.in/ (or via range contacts)",
+    parkWebsite: "https://nauradehiwls.in/",
+    googleMap: "https://maps.google.com/?q=Nauradehi+Wildlife+Sanctuary",
+  },
+
+  {
+    id: "madhav",
+    image: "/images/parks/madhav.jpg",
+    imagePos: "50% 38%",
+    name: { en: "Madhav National Park", hi: "माधव राष्ट्रीय उद्यान" },
+    district: { en: "Shivpuri (MP)", hi: "शिवपुरी (म.प्र.)" },
+    description: {
+      en: "Lakes, rolling hills and grasslands; good for antelopes and birds.",
+      hi: "झीलें, उठानदार पहाड़ियाँ और घासभूमि; मृग-हिरण व पक्षियों के लिए प्रसिद्ध।",
     },
     bestTime: { en: "Nov–Mar", hi: "नवंबर–मार्च" },
     safariTypes: { en: ["Jeep"], hi: ["जीप"] },
-    zones: { en: ["Ahera", "Bagcha", "Moravan (buffer)"], hi: ["अहेरा", "बगचा", "मोरवन (बफर)"] },
-    entryGates: { en: ["Ahera", "Tiktoli (buffer)"], hi: ["अहेरा", "टिकटोली (बफर)"] },
+    zones: { en: ["Core & buffers"], hi: ["कोर व बफर"] },
+    entryGates: { en: ["Sirsod / Main gate"], hi: ["सिरसौद / मुख्य द्वार"] },
     timings: {
-      summer: { en: "Two rounds daily (summer timings)", hi: "दिन में दो राउंड (ग्रीष्म समय)" },
-      winter: { en: "Two rounds daily (winter timings)", hi: "दिन में दो राउंड (शीत समय)" },
+      summer: { en: "≈ 5:30–10:00 & 3:00–6:30", hi: "≈ 5:30–10:00 & 3:00–6:30" },
+      winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 & 2:30–5:30" },
     },
     wildlife: {
-      en: ["Leopard", "Nilgai", "Chital", "Wild boar", "Cheetah (soft-release zones)"],
-      hi: ["तेंदुआ", "नीलगाय", "चितल", "जंगली सूअर", "चीता (सॉफ्ट-रिलीज़ जोन)"],
+      en: ["Leopard", "Chital", "Nilgai", "Blackbuck (nearby areas)", "Birds"],
+      hi: ["तेंदुआ", "चितल", "नीलगाय", "काला हिरण (कुछ हिस्से)", "पक्षी"],
     },
     howToReach: {
-      en: "Rail: Sheopur / Gwalior (~170 km). Air: Gwalior.",
-      hi: "रेल: श्योपुर / ग्वालियर (~170 किमी)। वायु: ग्वालियर।",
+      en: "Rail/Air: Gwalior; Road: NH passing through Shivpuri.",
+      hi: "रेल/हवाई: ग्वालियर; सड़क: शिवपुरी से राष्ट्रीय राजमार्ग।",
     },
+    officialBooking: "https://madhavnationalpark.org/",
+    parkWebsite: "https://madhavnationalpark.org/",
+    googleMap: "https://maps.google.com/?q=Madhav+National+Park",
+  },
+
+  {
+    id: "dinosaur",
+    image: "/images/parks/dinosaur.jpg",
+    imagePos: "50% 42%",
+    name: { en: "Dinosaur Fossil National Park (Ghughwa/Bagh)", hi: "डायनासोर जीवाश्म राष्ट्रीय उद्यान (घुघुवा/बाघ)" },
+    district: { en: "Dindori & Dhar (MP)", hi: "डिंडोरी व धार (म.प्र.)" },
+    description: {
+      en: "Unique paleontological sites with fossil trees and dinosaur egg fossils; museum/interpretation centres.",
+      hi: "विशिष्ट जीवाश्मीय स्थल—जीवाश्मकृत वृक्ष व डायनासोर अंडों के जीवाश्म; संग्रहालय/व्याख्या केन्द्र।",
+    },
+    bestTime: { en: "Nov–Mar", hi: "नवंबर–मार्च" },
+    safariTypes: {
+      en: ["Guided fossil trail", "Museum/Interpretation"],
+      hi: ["गाइडेड फॉसिल ट्रेल", "संग्रहालय/व्याख्या"],
+    },
+    zones: {
+      en: ["Bagh fossil sites", "Ghughwa Fossil Park"],
+      hi: ["बाघ फॉसिल साइट", "घुघुवा फॉसिल पार्क"],
+    },
+    entryGates: {
+      en: ["Bagh: District Dhar", "Ghughwa: near Dindori"],
+      hi: ["बाघ: धार जिला", "घुघुवा: डिंडोरी के पास"],
+    },
+    timings: {
+      summer: { en: "≈ 10:00–5:00 (site-wise)", hi: "≈ 10:00–5:00 (स्थल अनुसार)" },
+      winter: { en: "≈ 10:00–5:00", hi: "≈ 10:00–5:00" },
+    },
+    wildlife: {
+      en: ["Not a wildlife safari park; geological heritage sites"],
+      hi: ["यह वन्यजीव सफारी पार्क नहीं; भू-विज्ञान धरोहर स्थल"],
+    },
+    howToReach: {
+      en: "Bagh: Indore/Ujjain road; Ghughwa: Jabalpur–Dindori route.",
+      hi: "बाघ: इंदौर/उज्जैन मार्ग; घुघुवा: जबलपुर–डिंडोरी मार्ग।",
+    },
+    officialBooking: "https://dindori.nic.in/ (info) • https://dhar.nic.in/ (info)",
+    parkWebsite: "https://dindori.nic.in/en/tourism/ghughwa-national-fossil-park/",
+    googleMap: "https://maps.google.com/?q=Ghughwa+Fossil+Park",
   },
 ];
 
-/* ---------------- Booking links (deep → fallback) ---------------- */
-const MP_PORTAL = "https://forest.mponline.gov.in";
-
-const BOOKING_URL = {
-  kanha:        `${MP_PORTAL}/eBrochure/eBrochure_Forms/Wildlife_KanhaTigerReserve.aspx`,
-  bandhavgarh:  `${MP_PORTAL}/eBrochure/eBrochure_Forms/Wildlife_BandhavgarhTigerReserve.aspx`,
-  pench:        `${MP_PORTAL}/eBrochure/eBrochure_Forms/Wildlife_PenchTigerReserve.aspx`,
-  satpura:      `${MP_PORTAL}/eBrochure/eBrochure_Forms/Wildlife_SatpuraTigerReserve.aspx`,
-  panna:        `${MP_PORTAL}/eBrochure/eBrochure_Forms/Wildlife_PannaTigerReserve.aspx`,
-  "sanjay-dubri": `${MP_PORTAL}/eBrochure/eBrochure_Forms/Wildlife_SanjayDubriTigerReserve.aspx`,
-  nauradehi:    MP_PORTAL,
-  "gandhi-sagar": MP_PORTAL,
-  "van-vihar":  MP_PORTAL,
-  kuno:         MP_PORTAL,
-};
-
-// Inject bookingUrl per park (language-safe)
-mpParks.forEach((p) => {
-  const direct = BOOKING_URL[p.id];
-  const url = direct || MP_PORTAL;
-  if (!p.bookingUrl) p.bookingUrl = { en: url, hi: url };
-});
-
+// ✅ Both exports so imports never fail
 export default mpParks;
