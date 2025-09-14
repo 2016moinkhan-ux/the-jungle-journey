@@ -1,11 +1,12 @@
 // src/app/parks/[id]/page.jsx
+
 import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import mpParks from "@/data/parks";
 import { LBL } from "@/i18n/lang";
 
-// helpers
+/* ---------------- Helpers (lang-aware) ---------------- */
 const t = (val, lang) =>
   typeof val === "string" ? val : val?.[lang] ?? val?.en ?? "";
 const list = (val, lang) => {
@@ -16,6 +17,95 @@ const list = (val, lang) => {
   return arr;
 };
 
+/* ---------------- SEO / Meta (HI + EN) ---------------- */
+const siteURL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+export async function generateMetadata({ params, searchParams }) {
+  // In Next 13+/15, params & searchParams can be async—await them:
+  const { id } = await params;
+  const { lang: langParam } = await searchParams;
+
+  const lang = langParam === "hi" ? "hi" : "en";
+  const park = mpParks.find((p) => p.id === id);
+
+  if (!park) {
+    const title =
+      lang === "hi"
+        ? `पार्क नहीं मिला | The Jungle Journey`
+        : `Park not found | The Jungle Journey`;
+    const description =
+      lang === "hi"
+        ? "मध्य प्रदेश के राष्ट्रीय उद्यान और सफारी के बारे में जानकारी।"
+        : "Explore Madhya Pradesh’s national parks and safaris.";
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${siteURL}/parks/${id}?lang=${lang}`,
+        images: [`${siteURL}/images/og/default.jpg`],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [`${siteURL}/images/og/default.jpg`],
+      },
+      alternates: {
+        canonical: `${siteURL}/parks/${id}?lang=${lang}`,
+      },
+    };
+  }
+
+  const name = t(park.name, lang);
+  const summary = t(park.description, lang);
+
+  const title =
+    lang === "hi"
+      ? `${name} | द जंगल जर्नी`
+      : `${name} | The Jungle Journey`;
+  const description =
+    (summary && summary.slice(0, 150)) ||
+    (lang === "hi"
+      ? "मध्य प्रदेश के राष्ट्रीय उद्यान, सफारी और यात्रा की जानकारी।"
+      : "Discover MP’s jungles, safaris and best time to visit.");
+
+  const imgFile = park.image || `/images/parks/${park.id}.jpg`;
+  const ogImageAbs = imgFile.startsWith("http")
+    ? imgFile
+    : `${siteURL}${imgFile}`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${siteURL}/parks/${park.id}?lang=${lang}`,
+      type: "article",
+      images: [
+        {
+          url: ogImageAbs,
+          width: 1200,
+          height: 630,
+          alt: name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageAbs],
+    },
+    alternates: {
+      canonical: `${siteURL}/parks/${park.id}?lang=${lang}`,
+    },
+  };
+}
+
+/* ---------------- Page UI (unchanged design) ---------------- */
 export default function ParkDetailPage({ params, searchParams }) {
   // ✅ Next 15 safe unwrap
   const pr = use(params);
@@ -82,7 +172,7 @@ export default function ParkDetailPage({ params, searchParams }) {
                   {district}
                 </p>
 
-                {/* Quick chips on image (optional, small) */}
+                {/* Quick chips on image */}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {bestTime && (
                     <span className="chip chip-glow">
@@ -99,7 +189,7 @@ export default function ParkDetailPage({ params, searchParams }) {
             </div>
           </div>
 
-          {/* Buttons row (stays below image) */}
+          {/* Buttons row (below image) */}
           <div className="flex flex-wrap items-center gap-2 p-5 md:items-center md:justify-end">
             {official && (
               <a
@@ -202,7 +292,7 @@ export default function ParkDetailPage({ params, searchParams }) {
               {!!gates.length && (
                 <li>
                   <span className="font-medium">
-                    {lang === "hi" ? "प्रवेश द्वार:" : "Entry Gates:"}
+                    {lang === "hi" ? "прवेश द्वार:" : "Entry Gates:"}
                   </span>{" "}
                   {gates.join(", ")}
                 </li>
