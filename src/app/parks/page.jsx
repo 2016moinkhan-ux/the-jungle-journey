@@ -6,48 +6,39 @@ import LanguageSwitch from "@/components/LanguageSwitch";
 import parksModule from "@/data/parks";
 import { LBL } from "@/i18n/lang";
 
-/* ---------------- SEO / Meta (HI + EN) ---------------- */
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
+// ⭐ SEO for listing page
 export async function generateMetadata({ searchParams }) {
-  const { lang: langParam } = await searchParams;
-  const lang = langParam === "hi" ? "hi" : "en";
+  const sp = await searchParams;
+  const lang = sp?.lang === "hi" ? "hi" : "en";
 
   const title =
     lang === "hi"
-      ? "सभी पार्क | द जंगल जर्नी"
+      ? "सभी पार्क | The Jungle Journey"
       : "All Parks | The Jungle Journey";
 
   const description =
     lang === "hi"
-      ? "मध्य प्रदेश के राष्ट्रीय उद्यानों की सूची — खोजें, फ़िल्टर करें और सफ़ारी/होटल विकल्प देखें।"
-      : "Browse Madhya Pradesh national parks — search, filter, and find safari/hotel options.";
-
-  // Default OG image for parks listing (add this file once in public/images/og/)
-  const ogImage = `${SITE_URL}/images/og/parks-list.jpg`;
+      ? "मध्य प्रदेश के सभी नेशनल पार्क एक जगह—बेस्ट टाइम, जोन, सफारी व आधिकारिक बुकिंग लिंक।"
+      : "All Madhya Pradesh national parks in one place—best time, zones, safaris and official booking links.";
 
   return {
     title,
     description,
+    alternates: {
+      canonical: "/parks",
+      languages: {
+        en: "/parks?lang=en",
+        hi: "/parks?lang=hi",
+      },
+    },
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}/parks?lang=${lang}`,
+      url: "/parks",
       type: "website",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-    alternates: {
-      canonical: `${SITE_URL}/parks?lang=${lang}`,
     },
   };
 }
-/* ---------------- End SEO block ---------------- */
 
 export default function ParksPage({ searchParams }) {
   // ✅ Next 15: unwrap searchParams safely
