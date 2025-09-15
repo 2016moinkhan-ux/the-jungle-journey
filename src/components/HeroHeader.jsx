@@ -1,10 +1,27 @@
 "use client";
 import { motion } from "framer-motion";
 import { TreePalm, Leaf, Trees } from "lucide-react"; // icons
+import Link from "next/link"; // ✅ add for navigation
 
 export default function HeroHeader({ title, subtitle }) {
   return (
     <div className="relative mb-8">
+      {/* Top navigation */}
+      <div className="flex justify-center md:justify-end gap-6 mb-4 pr-4">
+        <Link
+          href="/parks"
+          className="text-emerald-300 hover:text-white transition"
+        >
+          Parks
+        </Link>
+        <Link
+          href="/blog"
+          className="text-emerald-300 hover:text-white transition"
+        >
+          Blog
+        </Link>
+      </div>
+
       {/* Left vines/leaves */}
       <div className="absolute -left-8 top-0 flex flex-col gap-3 opacity-80">
         <Leaf className="w-8 h-8 text-emerald-500 animate-bounce" />
