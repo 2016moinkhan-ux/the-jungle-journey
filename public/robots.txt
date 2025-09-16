@@ -1,6 +1,0 @@
-# robots.txt for The Jungle Journey
-
-User-agent: *
-Allow: /
-
-Sitemap: https://thejunglejourney.com/sitemap.xml

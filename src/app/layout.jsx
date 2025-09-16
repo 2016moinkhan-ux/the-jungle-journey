@@ -1,30 +1,45 @@
-// src/app/layout.jsx
 import "./globals.css";
-import GoogleAnalytics from "../components/GoogleAnalytics";
+import { AuthProvider } from "@/components/AuthContext";
+
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3002";
 
 export const metadata = {
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: "/" },
   title: "The Jungle Journey",
   description:
-    "Explore Madhya Pradesh National Parks — best time to visit, safaris, maps, and official booking links.",
-  metadataBase: new URL("https://the-jungle-journey.vercel.app"),
+    "Hotels, Jungle Safaris & Wildlife Info for Indian National Parks.",
   openGraph: {
     title: "The Jungle Journey",
-    description:
-      "Explore MP’s National Parks — Kanha, Bandhavgarh and more. Plan safaris and stays.",
-    url: "https://the-jungle-journey.vercel.app",
+    description: "Hotels, Jungle Safaris & Wildlife Info for Indian National Parks.",
+    url: siteUrl,
     siteName: "The Jungle Journey",
+    images: [
+      {
+        url: "/images/logo.jpg",
+        width: 800,
+        height: 600,
+        alt: "The Jungle Journey Logo",
+      },
+    ],
+    locale: "en_US",
     type: "website",
   },
-  icons: { icon: "/favicon.ico" },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Jungle Journey",
+    description: "Hotels, Jungle Safaris & Wildlife Info for Indian National Parks.",
+    images: ["/images/logo.jpg"],
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {children}
-        {/* GA4 tracking (G-DQ9TCKQH9D) */}
-        <GoogleAnalytics />
+        {/* ✅ पूरा app अब AuthProvider से wrap होगा */}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

@@ -1,9 +1,7 @@
 // src/firebase/firebase.js
-
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-// तुम्हारा Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyB0X....abcd",
   authDomain: "the-jungle-journey.firebaseapp.com",
@@ -13,9 +11,10 @@ const firebaseConfig = {
   appId: "1:123456789012:web:abcdef123456"
 };
 
-// App initialize (duplicate init avoid करने के लिए check)
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+// ✅ Firebase app initialize
+const app = initializeApp(firebaseConfig);
 
-// Auth instance export
-export const auth = getAuth(app);
-export { app };
+// ✅ Auth instance
+const auth = getAuth(app);
+
+export { app, auth }; // <- दोनों export कर दो
