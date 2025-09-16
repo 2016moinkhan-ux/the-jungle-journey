@@ -1,65 +1,134 @@
-"use client";
-import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { useRouter } from "next/navigation";
+"use client";   // ⬅️ सबसे ऊपर ये डालना ज़रूरी है
+
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+} from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || "/parks";
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [msg, setMsg] = useState("");
+
+  // अगर already logged-in है तो redirect कर दो
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) router.replace(next);
+    });
+    return () => unsub();
+  }, [router, next]);
+
+  // email/password login
   const doLogin = async (e) => {
     e.preventDefault();
-    setMsg("");
-    setLoading(true);
-
-    const email = e.target.email.value.trim();
-    const password = e.target.password.value;
-
     try {
-      const res = await signInWithEmailAndPassword(auth, email, password);
-      setMsg("✅ Login OK: " + (res.user?.email || ""));
-      router.replace("/parks");            // <-- redirect after success
+      await signInWithEmailAndPassword(auth, email, password);
+      router.replace(next);
     } catch (err) {
-      setMsg(`❌ ${err.code} — ${err.message}`);
-      console.error("LOGIN ERROR", err);
-    } finally {
-      setLoading(false);
+      setMsg("❌ " + err.message);
+    }
+  };
+
+  // sign up new user
+  const doSignup = async () => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.replace(next);
+    } catch (err) {
+      setMsg("❌ " + err.message);
+    }
+  };
+
+  // reset password
+  const doReset = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMsg("✅ Password reset link sent to email");
+    } catch (err) {
+      setMsg("❌ " + err.message);
+    }
+  };
+
+  // Google login
+  const doGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      router.replace(next);
+    } catch (err) {
+      setMsg("❌ " + err.message);
     }
   };
 
   return (
-    <div className="grid place-items-center min-h-screen p-6">
-      <div className="w-full max-w-md rounded-2xl shadow-lg p-6">
-        <h1 className="text-2xl font-semibold mb-4">The Jungle Journey</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100">
+      <form
+        onSubmit={doLogin}
+        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
+      >
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          The Jungle Journey
+        </h1>
 
-        <form onSubmit={doLogin} className="space-y-4">
-          <input
-            name="email"
-            type="email"
-            placeholder="Email (e.g. moin@test.com)"
-            className="w-full border rounded-xl px-4 py-3"
-            required
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            className="w-full border rounded-xl px-4 py-3"
-            required
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl py-3 font-medium shadow bg-black text-white disabled:opacity-60"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+        {msg && <div className="mb-4 text-red-600">{msg}</div>}
 
-        {msg && <p className="mt-4 text-sm">{msg}</p>}
-      </div>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full p-2 mb-3 border rounded"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 mb-4 border rounded"
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-green-600 text-white py-2 rounded mb-2"
+        >
+          Login
+        </button>
+
+        <button
+          type="button"
+          onClick={doSignup}
+          className="w-full bg-blue-600 text-white py-2 rounded mb-2"
+        >
+          Sign Up
+        </button>
+
+        <button
+          type="button"
+          onClick={doReset}
+          className="w-full bg-yellow-500 text-white py-2 rounded mb-2"
+        >
+          Forgot Password
+        </button>
+
+        <button
+          type="button"
+          onClick={doGoogle}
+          className="w-full bg-red-500 text-white py-2 rounded"
+        >
+          Continue with Google
+        </button>
+      </form>
     </div>
   );
 }

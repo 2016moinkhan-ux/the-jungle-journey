@@ -1,27 +1,55 @@
 "use client";
-import Link from "next/link";
+
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  return (
-    <nav className="w-full bg-neutral-900/80 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-        {/* Logo / Title */}
-        <Link href="/" className="text-emerald-400 font-bold text-lg">
-          🌿 The Jungle Journey
-        </Link>
+  const [userEmail, setUserEmail] = useState("");
+  const router = useRouter();
 
-        {/* Nav Links */}
-        <div className="flex gap-6 text-sm">
-          <Link href="/parks" className="hover:text-emerald-300">
-            Parks
-          </Link>
-          <Link href="/blog" className="hover:text-emerald-300">
-            Blog
-          </Link>
-          <Link href="/hotels" className="hover:text-emerald-300">
-            Hotels
-          </Link>
-        </div>
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserEmail(user.email || "");
+      } else {
+        setUserEmail("");
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  const doLogout = async () => {
+    try {
+      await signOut(auth);
+      router.replace("/login");
+    } catch (err) {
+      console.error("Logout error:", err.message);
+    }
+  };
+
+  return (
+    <nav className="flex items-center justify-between px-6 py-3 bg-[#0b3b2e] text-white shadow-md">
+      {/* Left side - Logo */}
+      <div className="flex items-center space-x-2">
+        <span className="text-2xl">🌿</span>
+        <h1 className="text-xl font-bold">The Jungle Journey</h1>
+      </div>
+
+      {/* Right side - User info + Logout */}
+      <div className="flex items-center space-x-4">
+        {userEmail && (
+          <span className="text-sm text-gray-200">
+            {userEmail}
+          </span>
+        )}
+        <button
+          onClick={doLogout}
+          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-sm font-medium"
+        >
+          Logout
+        </button>
       </div>
     </nav>
   );
