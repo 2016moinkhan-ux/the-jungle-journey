@@ -1,25 +1,21 @@
 "use client";
-
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
-import { useRouter } from "next/navigation";
 
 export default function LogoutButton() {
-  const router = useRouter();
-
-  const doLogout = async () => {
+  const handleLogout = async () => {
     try {
       await signOut(auth);
-      router.replace("/login"); // logout होते ही वापस login पर भेज दो
-    } catch (err) {
-      console.error("Logout error:", err.message);
+      window.location.href = "/login"; // logout ke baad login page
+    } catch (error) {
+      console.error("Logout Error:", error.message);
     }
   };
 
   return (
     <button
-      onClick={doLogout}
-      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+      onClick={handleLogout}
+      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
     >
       Logout
     </button>

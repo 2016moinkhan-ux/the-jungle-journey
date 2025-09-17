@@ -1,19 +1,14 @@
-// src/app/page.jsx
-export const metadata = {
-  title: "The Jungle Journey",
-  description:
-    "Explore hotels, jungle safaris, and wildlife information across India's National Parks.",
-};
+"use client";
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <main className="max-w-3xl mx-auto p-6 text-center">
-      <h1 className="text-3xl font-bold text-green-700">The Jungle Journey</h1>
-      <p className="mt-4 text-gray-700">
-        Explore hotels, jungle safaris, and wildlife information across India’s National Parks.
-      </p>
-      <p className="mt-2 text-sm text-gray-500">
-        Tip: Use the Parks page to browse parks and plan your trip.
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-green-50 to-green-100 text-center px-4">
+      <h1 className="text-3xl md:text-4xl font-bold text-green-900">
+        Explore Madhya Pradesh’s Wild Places
+      </h1>
+      <p className="mt-3 text-lg text-green-800/90 max-w-2xl">
+        National Parks, Wildlife Sanctuaries, Tiger Reserves & more—plan safaris,
+        stays and trips across MP.
       </p>
     </main>
   );

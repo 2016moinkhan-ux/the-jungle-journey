@@ -1,23 +1,28 @@
-import Image from "next/image";
-import LogoutButton from "@/components/LogoutButton";
+"use client";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <nav className="flex justify-between items-center p-4 bg-[#0b3b2e] text-white">
-      {/* Left side - Logo + Title */}
-      <div className="flex items-center gap-2">
-        <Image
-          src="/images/logo.jpg"
-          alt="The Jungle Journey Logo"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-        <h1 className="text-xl font-bold">The Jungle Journey</h1>
-      </div>
+    <header className="border-b bg-white/70 backdrop-blur sticky top-0 z-50">
+      <nav className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Logo / Brand */}
+        <Link href="/" className="font-bold text-emerald-700 text-lg">
+          The Jungle Journey
+        </Link>
 
-      {/* Right side - Logout Button */}
-      <LogoutButton />
-    </nav>
+        {/* Menu Links */}
+        <div className="flex items-center gap-6 text-slate-700 font-medium">
+          <Link href="/parks" className="hover:text-emerald-700">
+            Parks
+          </Link>
+          <Link href="/about" className="hover:text-emerald-700">
+            About
+          </Link>
+          <Link href="/login" className="hover:text-emerald-700">
+            Login
+          </Link>
+        </div>
+      </nav>
+    </header>
   );
 }

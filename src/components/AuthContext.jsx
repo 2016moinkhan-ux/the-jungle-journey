@@ -1,37 +1,44 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, getAuth, signOut } from "firebase/auth";
-import { app } from "@/firebase/firebase"; // ✅ अब app export हो रहा है
+import { auth } from "@/firebase/firebase";        // ✅ सिर्फ auth चाहिए
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+} from "firebase/auth";
 
-// Auth context create
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const auth = getAuth(app);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u ?? null);
+      setReady(true);
     });
-    return () => unsubscribe();
-  }, [auth]);
+    return () => unsub();
+  }, []);
 
-  const logout = async () => {
-    await signOut(auth);
-  };
+  const login = (email, password) =>
+    signInWithEmailAndPassword(auth, email.trim(), password);
+
+  const signup = (email, password) =>
+    createUserWithEmailAndPassword(auth, email.trim(), password);
+
+  const forgot = (email) => sendPasswordResetEmail(auth, email.trim());
+
+  const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, ready, login, signup, forgot, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);
