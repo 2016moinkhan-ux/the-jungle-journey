@@ -1,18 +1,19 @@
-// src/app/parks/layout.jsx
 import JungleBackdrop from "@/components/JungleBackdrop";
 import Fireflies from "@/components/Fireflies";
+import Navbar from "@/components/Navbar";
 
-export default function ParksLayout({ children }) {
+export default function ProtectedLayout({ children }) {
   return (
     <div className="relative min-h-screen">
-      {/* Background layer */}
+      {/* Background */}
       <div className="absolute inset-0 z-0">
         <JungleBackdrop />
         <Fireflies />
       </div>
 
-      {/* Foreground content */}
+      {/* Foreground */}
       <div className="relative z-10">
+        <Navbar />
         {children}
       </div>
     </div>

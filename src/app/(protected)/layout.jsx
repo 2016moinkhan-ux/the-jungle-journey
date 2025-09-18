@@ -1,11 +1,9 @@
-// src/app/(protected)/layout.jsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
-import Navbar from "@/components/Navbar"; // ⬅️ add this
 
 export default function ProtectedLayout({ children }) {
   const router = useRouter();
@@ -39,7 +37,7 @@ export default function ProtectedLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-[#051e18]">
-      <Navbar />        {/* 🔒 protected pages पर top bar */}
+      {/* ❌ Navbar hata diya, kyunki root layout me already hai */}
       <div className="pt-4">{children}</div>
     </div>
   );

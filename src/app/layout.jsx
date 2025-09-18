@@ -1,5 +1,6 @@
+// src/app/layout.jsx
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import AuthWrapper from "@/components/AuthWrapper";
 
 export const metadata = {
   title: "The Jungle Journey",
@@ -10,12 +11,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-green-50 text-gray-900">
-        {/* Navbar sab pages par dikhega */}
-        <Navbar />
-
-        {/* Page content */}
-        <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
+      <body className="bg-neutral-950 text-white">
+        {/* 🔐 Global auth context (Firebase listeners etc.) */}
+        <AuthWrapper>{children}</AuthWrapper>
       </body>
     </html>
   );

@@ -1,105 +1,124 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "@/firebase/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setErr("");
-    setLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, email.trim(), password);
-      router.push("/");
-    } catch (error) {
-      setErr(error.message || "Signup failed");
-    } finally {
-      setLoading(false);
+  const friendlyError = (code) => {
+    switch (code) {
+      case "auth/email-already-in-use":
+        return "An account with this email already exists.";
+      case "auth/invalid-email":
+        return "Invalid email address.";
+      case "auth/weak-password":
+        return "Password must be at least 6 characters.";
+      default:
+        return "Something went wrong. Please try again.";
     }
   };
 
-  const handleGoogle = async () => {
-    setErr("");
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
-      router.push("/");
-    } catch (error) {
-      setErr(error.message || "Google sign-up failed");
+      await createUserWithEmailAndPassword(auth, email.trim(), password);
+      router.push("/"); // success → home
+    } catch (err) {
+      setError(friendlyError(err.code));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-2xl bg-[#0f2e25] p-8 shadow-xl">
-        <h1 className="text-3xl font-semibold text-center text-white mb-6">
-          Sign Up
+    <div className="min-h-[calc(100vh-0px)] flex items-center justify-center px-4 bg-gradient-to-br from-emerald-900 via-green-900 to-black">
+      <div className="w-full max-w-md rounded-2xl shadow-2xl p-8 sm:p-10 bg-white/10 backdrop-blur-lg border border-white/20 animate-fadeIn">
+        <h1 className="text-4xl font-extrabold text-center text-emerald-300 mb-8 tracking-wide">
+          Create Account
         </h1>
 
-        {err ? (
-          <div className="mb-4 rounded-md bg-red-600/90 text-white px-3 py-2 text-sm">
-            {err}
+        {error && (
+          <div className="mb-4 rounded-md bg-red-600/80 px-4 py-3 text-sm text-white">
+            {error}
           </div>
-        ) : null}
+        )}
 
-        <form onSubmit={handleSignup} className="space-y-4">
+        <form onSubmit={handleSignup} className="space-y-5">
           <input
             type="email"
-            placeholder="Email"
-            className="w-full rounded-md bg-[#0d241d] border border-emerald-800/50 px-3 py-3 text-white placeholder:text-gray-400 outline-none focus:border-emerald-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 outline-none focus:ring-2 focus:ring-emerald-400"
             required
           />
 
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full rounded-md bg-[#0d241d] border border-emerald-800/50 px-3 py-3 text-white placeholder:text-gray-400 outline-none focus:border-emerald-400"
+          <PasswordInput
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            placeholder="Password"
+          />
+
+          <PasswordInput
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
           />
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-emerald-600 hover:bg-emerald-700 transition px-4 py-3 font-medium text-white disabled:opacity-60"
+            className="w-full rounded-lg bg-emerald-600 hover:bg-emerald-500 transition py-3 font-semibold text-white shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? "Please wait..." : "Create Account"}
+            {loading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
 
-        <div className="flex items-center gap-3 my-5 text-emerald-200/70">
-          <div className="h-px flex-1 bg-emerald-900" />
-          <span className="text-sm">or</span>
-          <div className="h-px flex-1 bg-emerald-900" />
-        </div>
-
-        <button
-          onClick={handleGoogle}
-          disabled={loading}
-          className="w-full rounded-md bg-white text-gray-900 hover:bg-gray-100 transition px-4 py-3 font-medium disabled:opacity-60"
-        >
-          Continue with Google
-        </button>
-
-        <div className="mt-4 text-sm text-center">
-          <a href="/login" className="text-emerald-300 hover:text-emerald-200">
-            Already have an account? <span className="underline">Login</span>
-          </a>
+        <div className="mt-8 text-center text-sm text-white/80">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-emerald-300 hover:text-emerald-200 font-medium"
+          >
+            Login
+          </Link>
         </div>
       </div>
+
+      {/* Animations */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.6s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

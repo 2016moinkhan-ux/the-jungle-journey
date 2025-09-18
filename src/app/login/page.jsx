@@ -4,16 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-
 import { auth, googleProvider } from "@/firebase/firebase";
 import PasswordInput from "@/components/PasswordInput";
 
 export default function LoginPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -61,23 +58,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-0px)] flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-[#0f2b24] text-white rounded-xl shadow-2xl p-6 sm:p-8">
-        <h1 className="text-3xl font-extrabold text-center mb-6">Login</h1>
+    <div className="min-h-[calc(100vh-0px)] flex items-center justify-center px-4 bg-gradient-to-br from-emerald-900 via-green-900 to-black">
+      <div className="w-full max-w-md rounded-2xl shadow-2xl p-8 sm:p-10 bg-white/10 backdrop-blur-lg border border-white/20 animate-fadeIn">
+        <h1 className="text-4xl font-extrabold text-center text-emerald-300 mb-8 tracking-wide">
+          Welcome Back
+        </h1>
 
-        {error ? (
-          <div className="mb-4 rounded-md bg-red-600/90 px-4 py-3 text-sm">
+        {error && (
+          <div className="mb-4 rounded-md bg-red-600/80 px-4 py-3 text-sm text-white">
             {error}
           </div>
-        ) : null}
+        )}
 
-        <form onSubmit={handleEmailLogin} className="space-y-4">
+        <form onSubmit={handleEmailLogin} className="space-y-5">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full p-3 rounded bg-[#10362d] border border-white/10 outline-none focus:ring-2 focus:ring-emerald-400"
+            placeholder="Enter your email"
+            className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 outline-none focus:ring-2 focus:ring-emerald-400"
             required
           />
 
@@ -89,35 +88,35 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-emerald-600 hover:bg-emerald-500 transition py-3 font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full rounded-lg bg-emerald-600 hover:bg-emerald-500 transition py-3 font-semibold text-white shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <div className="my-5 flex items-center gap-3 text-sm text-white/60">
-          <span className="h-px flex-1 bg-white/10" />
+        <div className="my-6 flex items-center gap-3 text-sm text-white/60">
+          <span className="h-px flex-1 bg-white/20" />
           <span>or</span>
-          <span className="h-px flex-1 bg-white/10" />
+          <span className="h-px flex-1 bg-white/20" />
         </div>
 
         <button
           type="button"
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full rounded bg-white text-[#0f2b24] hover:bg-white/90 transition py-3 font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full rounded-lg bg-white text-emerald-900 hover:bg-gray-100 transition py-3 font-semibold shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Continue with Google
         </button>
 
-        <div className="mt-6 flex items-center justify-between text-sm">
+        <div className="mt-8 flex items-center justify-between text-sm text-white/80">
           <Link
             href="/forgot-password"
             className="text-emerald-300 hover:text-emerald-200"
           >
             Forgot password?
           </Link>
-          <div className="text-white/70">
+          <div>
             Don&apos;t have an account?{" "}
             <Link
               href="/signup"
@@ -128,6 +127,23 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Animations */}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.6s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

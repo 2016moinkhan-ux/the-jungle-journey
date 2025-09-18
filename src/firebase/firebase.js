@@ -1,6 +1,11 @@
 // src/firebase/firebase.js
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,6 +21,17 @@ export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 // ✅ Auth
 export const auth = getAuth(app);
+
+// ✅ Make login persist (local storage)
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    if (typeof window !== "undefined") {
+      console.log("Auth persistence set: LOCAL ✅");
+    }
+  })
+  .catch((error) => {
+    console.error("Auth persistence error:", error);
+  });
 
 // ✅ Google provider
 export const googleProvider = new GoogleAuthProvider();

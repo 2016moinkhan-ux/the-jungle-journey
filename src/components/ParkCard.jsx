@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import TypeBadges from "./TypeBadge";   // 🟢 import kiya designation badges ke liye
 
 /** helper: {en,hi} या string → चुनी हुई भाषा की string */
 const pick = (v, lang) =>
@@ -25,7 +26,7 @@ export default function ParkCard({ park, lang = "en" }) {
   // localized values
   const name = pick(park?.name, lang);
   const district = pick(park?.district, lang);
-  const desc = pick(park?.description, lang);
+  const desc = pick(park?.description, lang);   // 🟢 ye line wapas add ki
   const best = pick(park?.bestTime, lang);
   const safariArr = list(park?.safariTypes, lang);
 
@@ -64,10 +65,11 @@ export default function ParkCard({ park, lang = "en" }) {
       <div className="p-4">
         {/* Description (short) */}
         {desc ? (
-          <p className="line-clamp-2 text-emerald-50/90 text-sm">
-            {desc}
-          </p>
+          <p className="line-clamp-2 text-emerald-50/90 text-sm">{desc}</p>
         ) : null}
+
+        {/* 🟢 NEW: Type/Designation badges */}
+        <TypeBadges park={park} lang={lang} className="mt-3" />
 
         {/* Badges */}
         <div className="mt-3 flex flex-wrap gap-2">

@@ -1,13 +1,19 @@
 // src/data/parks.js
 // ✅ Madhya Pradesh Parks master data (EN + HI) + Links (booking, maps, website)
-// Added: metaTitle, metaDescription, imageAlt, summary, about (EN/HI) — without touching your old fields
+// Added: type (National Park / Tiger Reserve / Wildlife Sanctuary)
+// Added earlier by you: metaTitle, metaDescription, imageAlt, summary, about (EN/HI) — untouched
 
 export const mpParks = [
   // 1) Kanha
   {
     id: "kanha",
     image: "/images/parks/kanha.jpg",
-    name: { en: "Kanha National Park", hi: "कान्हा राष्ट्रीय उद्यान" },
+    type: "Tiger Reserve",
+    designation: {
+  en: ["National Park", "Tiger Reserve"],   // English में list
+  hi: ["राष्ट्रीय उद्यान", "टाइगर रिज़र्व"], // Hindi में list
+},
+    name: { en: "Kanha Tiger Reserve", hi: "कान्हा टाइगर रिज़र्व" },
     district: { en: "Mandla / Balaghat (MP)", hi: "मंडला / बालाघाट (मप्र)" },
     description: {
       en: "India’s best-managed tiger reserve; sal forests & wide meadows with the world’s only hard-ground barasingha.",
@@ -33,8 +39,8 @@ export const mpParks = [
     mapLink: "https://www.google.com/maps/search/?api=1&query=Kanha+National+Park",
     website: "https://www.kanhanationalparkonline.in",
 
-    // 🔥 Added SEO + content
-    metaTitle: { en: "Kanha National Park | The Jungle Journey", hi: "कान्हा राष्ट्रीय उद्यान | द जंगल जर्नी" },
+    // 🔥 SEO + content (unchanged)
+    metaTitle: { en: "Kanha Tiger Reserve | The Jungle Journey", hi: "कान्हा टाइगर रिज़र्व | द जंगल जर्नी" },
     metaDescription: {
       en: "Explore Kanha’s sal forests, meadows and barasingha habitat with frequent tiger sightings. Best time Nov–Mar.",
       hi: "कान्हा के साल वन, घासभूमि और बारहसिंगा आवास का अन्वेषण करें; टाइगर साइटिंग प्रसिद्ध। श्रेष्ठ समय: नव–मार्च।",
@@ -54,7 +60,12 @@ export const mpParks = [
   {
     id: "bandhavgarh",
     image: "/images/parks/bandhavgarh.jpg",
-    name: { en: "Bandhavgarh National Park", hi: "बांधवगढ़ राष्ट्रीय उद्यान" },
+    type: "Tiger Reserve",
+    designation: {
+    en: ["National Park", "Tiger Reserve"], // English list
+    hi: ["राष्ट्रीय उद्यान", "टाइगर रिज़र्व"], // Hindi list
+  },
+    name: { en: "Bandhavgarh Tiger Reserve", hi: "बांधवगढ़ टाइगर रिज़र्व" },
     district: { en: "Umaria (MP)", hi: "उमरिया (मप्र)" },
     description: {
       en: "High tiger density; sal–bamboo forests and the ancient Bandhavgarh Fort.",
@@ -80,7 +91,7 @@ export const mpParks = [
     mapLink: "https://www.google.com/maps/search/?api=1&query=Bandhavgarh+National+Park",
     website: "https://www.bandhavgarhnationalpark.in",
 
-    metaTitle: { en: "Bandhavgarh National Park | The Jungle Journey", hi: "बांधवगढ़ राष्ट्रीय उद्यान | द जंगल जर्नी" },
+    metaTitle: { en: "Bandhavgarh Tiger Reserve | The Jungle Journey", hi: "बांधवगढ़ टाइगर रिज़र्व | द जंगल जर्नी" },
     metaDescription: {
       en: "India’s famed high-density tiger reserve with rugged hills and an ancient fort. Plan safaris Oct–Apr.",
       hi: "भारत का उच्च-घनत्व टाइगर रिज़र्व—ऊबड़-खाबड़ पहाड़ियाँ व प्राचीन किला। सफारी हेतु श्रेष्ठ: अक्तू–अप्रैल।",
@@ -100,7 +111,12 @@ export const mpParks = [
   {
     id: "pench",
     image: "/images/parks/pench.jpg",
-    name: { en: "Pench National Park", hi: "पेंच राष्ट्रीय उद्यान" },
+    type: "Tiger Reserve",
+    designation: {
+    en: ["National Park", "Tiger Reserve"], // English list
+    hi: ["राष्ट्रीय उद्यान", "टाइगर रिज़र्व"], // Hindi list
+  },
+    name: { en: "Pench Tiger Reserve", hi: "पेंच टाइगर रिज़र्व" },
     district: { en: "Seoni / Chhindwara (MP)", hi: "सिवनी / छिंदवाड़ा (मप्र)" },
     description: {
       en: "Inspiration for ‘The Jungle Book’; teak & mixed forests with multiple gates.",
@@ -120,7 +136,7 @@ export const mpParks = [
     mapLink: "https://www.google.com/maps/search/?api=1&query=Pench+National+Park",
     website: "https://www.penchnationalparkonline.in",
 
-    metaTitle: { en: "Pench National Park | The Jungle Journey", hi: "पेंच राष्ट्रीय उद्यान | द जंगल जर्नी" },
+    metaTitle: { en: "Pench Tiger Reserve | The Jungle Journey", hi: "पेंच टाइगर रिज़र्व | द जंगल जर्नी" },
     metaDescription: {
       en: "Kipling’s ‘Mowgli land’ of teak forests, streams and rich wildlife. Best season Oct–Mar.",
       hi: "किपलिंग की ‘मोगली लैंड’—सागौन वन, नाले व समृद्ध वन्यजीव। श्रेष्ठ मौसम: अक्तू–मार्च।",
@@ -140,6 +156,11 @@ export const mpParks = [
   {
     id: "satpura",
     image: "/images/parks/satpura.jpg",
+    type: "Tiger Reserve",
+    designation: {
+    en: ["National Park", "Tiger Reserve"], // English list
+    hi: ["राष्ट्रीय उद्यान", "टाइगर रिज़र्व"], // Hindi list
+  },
     name: { en: "Satpura Tiger Reserve", hi: "सतपुड़ा टाइगर रिज़र्व" },
     district: { en: "Hoshangabad/Narmadapuram (MP)", hi: "होशंगाबाद/नर्मदापुरम (मप्र)" },
     description: {
@@ -148,7 +169,7 @@ export const mpParks = [
     },
     bestTime: { en: "Oct–Jun", hi: "अक्टूबर–जून" },
     safariTypes: { en: ["Jeep", "Boat", "Walking"], hi: ["जीप", "बोट", "वॉकिंग"] },
-    zones: { en: ["Pachmarhi", "Panarpani", "Churna"], hi: ["पचमढ़ी", "पनारपानी", "चूरना"] },
+    zones: { en: ["Pachmarhi", "Panarpani", "Churna"], hi: ["পचमढ़ी", "पनारपानी", "चूरना"] },
     entryGates: { en: ["Pachmarhi", "Matkuli", "Sohagpur side"], hi: ["पचमढ़ी", "मतकुली", "सोहागपुर"] },
     timings: {
       summer: { en: "≈ 5:30–10:30 & 3:00–6:30", hi: "≈ 5:30–10:30 और 3:00–6:30" },
@@ -180,6 +201,11 @@ export const mpParks = [
   {
     id: "panna",
     image: "/images/parks/panna.jpg",
+    type: "Tiger Reserve",
+    designation: {
+    en: ["National Park", "Tiger Reserve"], // English list
+    hi: ["राष्ट्रीय उद्यान", "टाइगर रिज़र्व"], // Hindi list
+  },
     name: { en: "Panna Tiger Reserve", hi: "पन्ना टाइगर रिज़र्व" },
     district: { en: "Panna / Chhatarpur (MP)", hi: "पन्ना / छतरपुर (मप्र)" },
     description: {
@@ -194,7 +220,7 @@ export const mpParks = [
       summer: { en: "≈ 5:30–10:30 & 3:00–6:30", hi: "≈ 5:30–10:30 और 3:00–6:30" },
       winter: { en: "≈ 6:30–11:00 & 2:30–5:30", hi: "≈ 6:30–11:00 और 2:30–5:30" },
     },
-    wildlife: { en: ["Tiger", "Leopard", "Gharial", "Crocodile", "Vulture"], hi: ["बाघ", "तेन्दुआ", "घड़ियाल", "मगर", "गिद्ध"] },
+    wildlife: { en: ["Tiger", "Leopard", "Gharial", "Crocodile", "Vulture"], hi: ["বाघ", "तेन्दुआ", "घड़ियाल", "मगर", "गिद्ध"] },
     howToReach: { en: "Rail: Khajuraho/Satna. Air: Khajuraho (~25 km).", hi: "रेल: खजुराहो/सतना. वायु: खजुराहो (~25 किमी)." },
     officialBooking: "https://forest.mponline.gov.in/",
     mapLink: "https://www.google.com/maps/search/?api=1&query=Panna+Tiger+Reserve",
@@ -220,6 +246,11 @@ export const mpParks = [
   {
     id: "sanjay-dubri",
     image: "/images/parks/sanjay-dubri.jpg",
+    type: "Tiger Reserve",
+    designation: {
+    en: ["National Park", "Tiger Reserve"], // English list
+    hi: ["राष्ट्रीय उद्यान", "टाइगर रिज़र्व"], // Hindi list
+  },
     name: { en: "Sanjay–Dubri Tiger Reserve", hi: "संजय–दुबरी टाइगर रिज़र्व" },
     district: { en: "Sidhi / Singrauli (MP)", hi: "सीधी / सिंगरौली (मप्र)" },
     description: {
@@ -260,6 +291,11 @@ export const mpParks = [
   {
     id: "kuno",
     image: "/images/parks/kuno.jpg",
+    type: "National Park",
+    designation: {
+    en: ["National Park"],
+    hi: ["राष्ट्रीय उद्यान"],
+  },
     name: { en: "Kuno National Park", hi: "कूनो राष्ट्रीय उद्यान" },
     district: { en: "Sheopur (MP)", hi: "श्योपुर (मप्र)" },
     description: {
@@ -300,6 +336,11 @@ export const mpParks = [
   {
     id: "van-vihar",
     image: "/images/parks/van-vihar.jpg",
+    type: "National Park",
+    designation: {
+    en: ["National Park", "Zoo"],
+    hi: ["राष्ट्रीय उद्यान", "चिड़ियाघर"],
+  },
     name: { en: "Van Vihar National Park & Zoo, Bhopal", hi: "वन विहार राष्ट्रीय उद्यान एवं चिड़ियाघर, भोपाल" },
     district: { en: "Bhopal (MP)", hi: "भोपाल (मप्र)" },
     description: {
@@ -340,6 +381,11 @@ export const mpParks = [
   {
     id: "gandhi-sagar",
     image: "/images/parks/gandhi-sagar.jpg",
+    type: "Wildlife Sanctuary",
+    designation: {
+    en: ["Wildlife Sanctuary"],
+    hi: ["वन्यजीव अभयारण्य"],
+  },
     name: { en: "Gandhi Sagar Wildlife Sanctuary", hi: "गांधी सागर अभयारण्य" },
     district: { en: "Mandsaur / Neemuch (MP)", hi: "मंदसौर / नीमच (मप्र)" },
     description: {
@@ -351,7 +397,7 @@ export const mpParks = [
     zones: { en: ["Sanctuary ranges"], hi: ["अभयारण्य रेंज"] },
     entryGates: { en: ["Local range gates"], hi: ["स्थानीय रेंज द्वार"] },
     timings: {
-      summer: { en: "Day timings by range", hi: "दिन के समय (रेंज अनुसार)" },
+      summer: { en: "Day timings by range", hi: "दिन के समय (רेंज अनुसार)" },
       winter: { en: "Day timings by range", hi: "दिन के समय (रेंज अनुसार)" },
     },
     wildlife: { en: ["Chinkara", "Nilgai", "Hyena", "Birds"], hi: ["चिंकारा", "नीलगाय", "लकड़बग्घा", "पक्षी"] },
@@ -380,6 +426,11 @@ export const mpParks = [
   {
     id: "nauradehi",
     image: "/images/parks/nauradehi.jpg",
+    type: "Wildlife Sanctuary",
+    designation: {
+    en: ["Wildlife Sanctuary"],
+    hi: ["वन्यजीव अभयारण्य"],
+  },
     name: { en: "Nauradehi Wildlife Sanctuary", hi: "नौरादेही अभयारण्य" },
     district: { en: "Sagar / Damoh / Narsinghpur (MP)", hi: "सागर / दमोह / नरसिंहपुर (मप्र)" },
     description: {
@@ -420,6 +471,11 @@ export const mpParks = [
   {
     id: "madhav",
     image: "/images/parks/madhav.jpg",
+    type: "National Park",
+    designation: {
+    en: ["National Park"],
+    hi: ["राष्ट्रीय उद्यान"],
+  },
     name: { en: "Madhav National Park", hi: "माधव राष्ट्रीय उद्यान" },
     district: { en: "Shivpuri (MP)", hi: "शिवपुरी (मप्र)" },
     description: {
@@ -460,6 +516,11 @@ export const mpParks = [
   {
     id: "dinosaur",
     image: "/images/parks/dinosaur.jpg",
+    type: "National Park",
+    designation: {
+    en: ["National Park", "Fossil Park"],
+    hi: ["राष्ट्रीय उद्यान", "जीवाश्म उद्यान"],
+  },
     name: { en: "Dinosaur Fossil National Park", hi: "डायनासोर जीवाश्म राष्ट्रीय उद्यान" },
     district: { en: "Bagh (Dhar) / Ghughwa (Dindori), MP", hi: "बाग (धार) / घुघुवा (डिंडोरी), मप्र" },
     description: {

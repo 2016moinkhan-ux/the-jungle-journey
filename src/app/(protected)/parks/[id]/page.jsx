@@ -1,10 +1,11 @@
-// src/app/parks/[id]/page.jsx
+// src/app/(protected)/parks/[id]/page.jsx
+// (NO "use client" here — this is a Server Component)
 
-import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import mpParks from "@/data/parks";
 import { LBL } from "@/i18n/lang";
+import TypeBadges from "@/components/TypeBadge"; // client component is ok in server file
 
 /* ---------------- Helpers (lang-aware) ---------------- */
 const t = (val, lang) =>
@@ -21,11 +22,10 @@ const list = (val, lang) => {
 const siteURL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export async function generateMetadata({ params, searchParams }) {
-  // In Next 13+/15, params & searchParams can be async—await them:
-  const { id } = await params;
-  const { lang: langParam } = await searchParams;
-
+  const { id } = params;
+  const langParam = searchParams?.lang;
   const lang = langParam === "hi" ? "hi" : "en";
+
   const park = mpParks.find((p) => p.id === id);
 
   if (!park) {
@@ -105,14 +105,10 @@ export async function generateMetadata({ params, searchParams }) {
   };
 }
 
-/* ---------------- Page UI (unchanged design) ---------------- */
+/* ---------------- Page UI (Server Component) ---------------- */
 export default function ParkDetailPage({ params, searchParams }) {
-  // ✅ Next 15 safe unwrap
-  const pr = use(params);
-  const sp = use(searchParams);
-
-  const id = pr?.id || "";
-  const lang = sp?.lang === "hi" ? "hi" : "en";
+  const id = params?.id || "";
+  const lang = searchParams?.lang === "hi" ? "hi" : "en";
   const ui = LBL?.[lang] ?? LBL?.en ?? {};
 
   const park = mpParks.find((p) => p.id === id);
@@ -156,23 +152,27 @@ export default function ParkDetailPage({ params, searchParams }) {
               src={park.image}
               alt={name}
               className="h-full w-full object-cover"
-              loading="eager"
             />
 
-            {/* dark gradient veil (readable text) */}
+            {/* dark gradient veil */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
-            {/* Animated text overlay */}
+            {/* Overlay */}
             <div className="absolute left-5 right-5 bottom-5 md:left-7 md:right-7 md:bottom-6">
               <div className="fade-slide-in text-shadow-soft">
                 <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
                   {name}
                 </h1>
-                <p className="mt-1 text-sm md:text-base text-white/80">
-                  {district}
-                </p>
+                {district && (
+                  <p className="mt-1 text-sm md:text-base text-white/80">
+                    {district}
+                  </p>
+                )}
 
-                {/* Quick chips on image */}
+                {/* 🟢 Designation badges */}
+                <TypeBadges park={park} lang={lang} className="mt-2" />
+
+                {/* Quick chips */}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {bestTime && (
                     <span className="chip chip-glow">
@@ -189,7 +189,7 @@ export default function ParkDetailPage({ params, searchParams }) {
             </div>
           </div>
 
-          {/* Buttons row (below image) */}
+          {/* Buttons row */}
           <div className="flex flex-wrap items-center gap-2 p-5 md:items-center md:justify-end">
             {official && (
               <a
@@ -292,7 +292,7 @@ export default function ParkDetailPage({ params, searchParams }) {
               {!!gates.length && (
                 <li>
                   <span className="font-medium">
-                    {lang === "hi" ? "прवेश द्वार:" : "Entry Gates:"}
+                    {lang === "hi" ? "प्रवेश द्वार:" : "Entry Gates:"}
                   </span>{" "}
                   {gates.join(", ")}
                 </li>

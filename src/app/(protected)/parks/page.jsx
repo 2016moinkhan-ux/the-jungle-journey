@@ -6,15 +6,12 @@ import LanguageSwitch from "@/components/LanguageSwitch";
 import parksModule from "@/data/parks";
 import { LBL } from "@/i18n/lang";
 
-// ⭐ SEO for listing page
 export async function generateMetadata({ searchParams }) {
   const sp = await searchParams;
   const lang = sp?.lang === "hi" ? "hi" : "en";
 
   const title =
-    lang === "hi"
-      ? "सभी पार्क | The Jungle Journey"
-      : "All Parks | The Jungle Journey";
+    lang === "hi" ? "सभी पार्क | The Jungle Journey" : "All Parks | The Jungle Journey";
 
   const description =
     lang === "hi"
@@ -26,27 +23,16 @@ export async function generateMetadata({ searchParams }) {
     description,
     alternates: {
       canonical: "/parks",
-      languages: {
-        en: "/parks?lang=en",
-        hi: "/parks?lang=hi",
-      },
+      languages: { en: "/parks?lang=en", hi: "/parks?lang=hi" },
     },
-    openGraph: {
-      title,
-      description,
-      url: "/parks",
-      type: "website",
-    },
+    openGraph: { title, description, url: "/parks", type: "website" },
   };
 }
 
 export default function ParksPage({ searchParams }) {
-  // ✅ Next 15: unwrap searchParams safely
   const sp = use(searchParams);
-  const rawLang = sp?.lang;
-  const lang = rawLang === "hi" ? "hi" : "en";
+  const lang = sp?.lang === "hi" ? "hi" : "en";
 
-  // ✅ parks data (default export / named दोनों cases safe)
   const mpParks =
     Array.isArray(parksModule?.mpParks)
       ? parksModule.mpParks
@@ -56,16 +42,12 @@ export default function ParksPage({ searchParams }) {
       ? parksModule
       : [];
 
-  // ✅ i18n subtitle (fallback safety)
   const subtitle =
     LBL?.[lang]?.subtitle ||
-    (lang === "hi"
-      ? "मध्य प्रदेश — राष्ट्रीय उद्यान"
-      : "Madhya Pradesh — National Parks");
+    (lang === "hi" ? "मध्य प्रदेश — राष्ट्रीय उद्यान" : "Madhya Pradesh — National Parks");
 
   return (
     <main className="relative min-h-screen text-white">
-      {/* Header */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 pt-6">
         <div className="flex items-center justify-between">
           <HeroHeader title="The Jungle Journey" subtitle={subtitle} />
@@ -73,7 +55,6 @@ export default function ParksPage({ searchParams }) {
         </div>
       </div>
 
-      {/* Listing grid + search/filters */}
       <section className="relative z-10 mx-auto max-w-7xl px-4 pb-24">
         <ParksClient lang={lang} parks={mpParks} />
       </section>

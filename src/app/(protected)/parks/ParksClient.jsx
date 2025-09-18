@@ -1,4 +1,3 @@
-// src/app/parks/ParksClient.jsx
 "use client";
 
 import { useState, useMemo } from "react";
@@ -46,17 +45,19 @@ export default function ParksClient({ parks = [], lang = "en" }) {
 
   return (
     <>
-      {/* Filters */}
-      <ParkFilters
-        q={q}
-        setQ={setQ}
-        district={district}
-        setDistrict={setDistrict}
-        safari={safari}
-        setSafari={setSafari}
-        parks={parks}
-        lang={lang}
-      />
+      {/* Filters section ko anchor banaya */}
+      <div id="safaris">
+        <ParkFilters
+          q={q}
+          setQ={setQ}
+          district={district}
+          setDistrict={setDistrict}
+          safari={safari}
+          setSafari={setSafari}
+          parks={parks}
+          lang={lang}
+        />
+      </div>
 
       {/* Cards */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
