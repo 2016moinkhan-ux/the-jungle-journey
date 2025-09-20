@@ -1,12 +1,15 @@
 // src/firebase/firebase.js
+// Client-safe Firebase bootstrap (App Router friendly)
+
 import { initializeApp, getApps, getApp } from "firebase/app";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 
-/**
- * Server-safe Firebase init.
- * We export `auth` and `googleProvider` placeholders so existing imports work,
- * and fill them only on the client to avoid SSR build errors.
- */
-
+// Read from NEXT_PUBLIC_* envs (required on client)
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -16,38 +19,39 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// --- Singleton app (works on server & client)
-export const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+// ---- Core singletons ----
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// --- Placeholders (so imports don't break on server)
+// Debug (optional): uncomment while testing
+// if (typeof window !== "undefined") {
+//   const { apiKey, authDomain, projectId } = app.options;
+//   console.log("[FIREBASE CONFIG]", { apiKey, authDomain, projectId });
+// }
+
+// We only create Auth/Provider on the client
 let _auth = null;
 let _googleProvider = null;
 
-// --- Initialize Auth ONLY in the browser
-if (typeof window !== "undefined") {
-  // Dynamic import so nothing from firebase/auth loads on the server
-  import("firebase/auth").then(
-    async ({ getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence }) => {
-      _auth = getAuth(app);
-      try {
-        await setPersistence(_auth, browserLocalPersistence);
-      } catch {
-        // ignore persistence issues during race/refresh
-      }
-      _googleProvider = new GoogleAuthProvider();
-      _googleProvider.setCustomParameters({ prompt: "select_account" });
-    }
-  );
+export function getClientAuth() {
+  if (typeof window === "undefined") return null; // never construct on server
+  if (!_auth) {
+    _auth = getAuth(app);
+    // Persist login on the browser
+    setPersistence(_auth, browserLocalPersistence).catch((e) =>
+      console.error("Auth persistence error:", e)
+    );
+  }
+  return _auth;
 }
 
-// --- Named exports kept for compatibility
-export const auth = _auth;                 // will be null on server / until client init completes
-export const googleProvider = _googleProvider;
-
-// Optional helper if you want to explicitly wait in client components
-export async function initAuthClient() {
+export function getGoogleProvider() {
   if (typeof window === "undefined") return null;
-  if (_auth) return { auth: _auth, googleProvider: _googleProvider };
-  await new Promise((r) => setTimeout(r, 0)); // next tick
-  return { auth: _auth, googleProvider: _googleProvider };
+  if (!_googleProvider) {
+    _googleProvider = new GoogleAuthProvider();
+    _googleProvider.setCustomParameters({ prompt: "select_account" });
+  }
+  return _googleProvider;
 }
+
+// If you still need access to the app itself:
+export { app };

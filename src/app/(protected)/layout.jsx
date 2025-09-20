@@ -1,44 +1,46 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
+import { getClientAuth } from "@/firebase/firebase";
 
 export default function ProtectedLayout({ children }) {
   const router = useRouter();
-  const pathname = usePathname();
   const [checking, setChecking] = useState(true);
   const [isAuthed, setIsAuthed] = useState(false);
 
   useEffect(() => {
+    const auth = getClientAuth();
+    if (!auth) {
+      setChecking(false);
+      return;
+    }
+
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsAuthed(true);
-        setChecking(false);
       } else {
         setIsAuthed(false);
-        setChecking(false);
-        router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+        router.replace("/login");
       }
+      setChecking(false);
     });
+
     return () => unsub();
-  }, [router, pathname]);
+  }, [router]);
 
   if (checking) {
     return (
-      <div className="min-h-screen grid place-items-center bg-[#0b3b2e] text-white">
-        <div className="animate-pulse text-lg">Checking login…</div>
+      <div className="flex h-screen items-center justify-center text-emerald-200">
+        Loading...
       </div>
     );
   }
 
-  if (!isAuthed) return null;
+  if (!isAuthed) {
+    return null; // jab tak redirect nahi hota blank dikhao
+  }
 
-  return (
-    <div className="min-h-screen bg-[#051e18]">
-      {/* ❌ Navbar hata diya, kyunki root layout me already hai */}
-      <div className="pt-4">{children}</div>
-    </div>
-  );
+  return <>{children}</>;
 }
