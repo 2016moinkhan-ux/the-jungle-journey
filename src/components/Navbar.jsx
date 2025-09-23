@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import LanguageSwitch from "@/components/LanguageSwitch"; // ✅ नया clean component
 
 const NAV_ITEMS = [
   { href: "/", label: { en: "Home", hi: "होम" } },
   { href: "/parks", label: { en: "Parks", hi: "पार्क्स" } },
   { href: "/hotels", label: { en: "Hotels", hi: "होटल्स" } },
-  { href: "/safaris", label: { en: "Safaris", hi: "सफारी" } }, // इसको parks page से link करेंगे
+  { href: "/safaris", label: { en: "Safaris", hi: "सफारी" } }, // parks#safaris पर ले जाएगा
   { href: "/about", label: { en: "About", hi: "परिचय" } },
   { href: "/contact", label: { en: "Contact", hi: "संपर्क" } },
 ];
@@ -20,8 +21,6 @@ export default function Navbar() {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const router = useRouter();
-
   const lang = searchParams?.get("lang") === "hi" ? "hi" : "en";
 
   useEffect(() => {
@@ -30,14 +29,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const toggleLang = () => {
-    const newLang = lang === "hi" ? "en" : "hi";
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("lang", newLang);
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
-  // 👇 Safaris को parks page + #safaris section पर redirect कर रहे हैं
+  // ✅ Safaris को parks#safaris से link किया गया
   const items = useMemo(() => {
     return NAV_ITEMS.map((it) => {
       const base =
@@ -81,12 +73,8 @@ export default function Navbar() {
               {item.label[lang]}
             </Link>
           ))}
-          <button
-            onClick={toggleLang}
-            className="ml-4 rounded bg-emerald-600 px-3 py-1.5 text-sm hover:bg-emerald-500"
-          >
-            {lang === "hi" ? "EN" : "HI"}
-          </button>
+          {/* ✅ Language Switch */}
+          <LanguageSwitch />
         </div>
 
         {/* Mobile Hamburger */}
@@ -143,15 +131,10 @@ export default function Navbar() {
                     {item.label[lang]}
                   </Link>
                 ))}
-                <button
-                  onClick={() => {
-                    toggleLang();
-                    setOpen(false);
-                  }}
-                  className="mt-4 self-start rounded bg-emerald-600 px-3 py-1.5 text-sm hover:bg-emerald-500"
-                >
-                  {lang === "hi" ? "EN" : "HI"}
-                </button>
+                {/* ✅ Mobile me bhi Language Switch */}
+                <div className="mt-4">
+                  <LanguageSwitch />
+                </div>
               </div>
             </motion.div>
           </>

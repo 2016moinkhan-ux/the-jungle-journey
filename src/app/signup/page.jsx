@@ -4,11 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
+import { auth } from "@/firebase/firebase";   // ✅ direct import
 import PasswordInput from "@/components/PasswordInput";
 
 export default function SignupPage() {
   const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,13 +19,13 @@ export default function SignupPage() {
   const friendlyError = (code) => {
     switch (code) {
       case "auth/email-already-in-use":
-        return "An account with this email already exists.";
+        return "Is email se account already exist karta hai.";
       case "auth/invalid-email":
-        return "Invalid email address.";
+        return "Email address galat hai.";
       case "auth/weak-password":
-        return "Password must be at least 6 characters.";
+        return "Password kam se kam 6 characters ka hona chahiye.";
       default:
-        return "Something went wrong. Please try again.";
+        return "Kuch galat ho gaya. Dobara koshish karein.";
     }
   };
 
@@ -33,16 +34,16 @@ export default function SignupPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Passwords match nahi ho rahe.");
       return;
     }
 
     setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email.trim(), password);
-      router.push("/"); // success → home
+      router.push("/"); // ✅ success → home
     } catch (err) {
-      setError(friendlyError(err.code));
+      setError(friendlyError(err?.code));
     } finally {
       setLoading(false);
     }
@@ -103,7 +104,6 @@ export default function SignupPage() {
         </div>
       </div>
 
-      {/* Animations */}
       <style jsx global>{`
         @keyframes fadeIn {
           from {

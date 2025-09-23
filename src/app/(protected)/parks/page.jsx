@@ -1,17 +1,24 @@
-// src/app/parks/page.jsx
-import { use } from "react";
+// src/app/(protected)/parks/page.jsx
 import HeroHeader from "@/components/HeroHeader";
 import ParksClient from "./ParksClient";
-import LanguageSwitch from "@/components/LanguageSwitch";
 import parksModule from "@/data/parks";
 import { LBL } from "@/i18n/lang";
 
+// (Optional) If you still see warnings, keep this:
+export const dynamic = "force-dynamic"; // ensures runtime evaluation
+
+async function getLang(searchParams) {
+  const sp = await searchParams; // ✅ MUST await in Next 15
+  return sp?.lang === "hi" ? "hi" : "en";
+}
+
 export async function generateMetadata({ searchParams }) {
-  const sp = await searchParams;
-  const lang = sp?.lang === "hi" ? "hi" : "en";
+  const lang = await getLang(searchParams);
 
   const title =
-    lang === "hi" ? "सभी पार्क | The Jungle Journey" : "All Parks | The Jungle Journey";
+    lang === "hi"
+      ? "सभी पार्क | The Jungle Journey"
+      : "All Parks | The Jungle Journey";
 
   const description =
     lang === "hi"
@@ -25,13 +32,11 @@ export async function generateMetadata({ searchParams }) {
       canonical: "/parks",
       languages: { en: "/parks?lang=en", hi: "/parks?lang=hi" },
     },
-    openGraph: { title, description, url: "/parks", type: "website" },
   };
 }
 
-export default function ParksPage({ searchParams }) {
-  const sp = use(searchParams);
-  const lang = sp?.lang === "hi" ? "hi" : "en";
+export default async function ParksPage({ searchParams }) {
+  const lang = await getLang(searchParams); // ✅ await
 
   const mpParks =
     Array.isArray(parksModule?.mpParks)
@@ -44,14 +49,16 @@ export default function ParksPage({ searchParams }) {
 
   const subtitle =
     LBL?.[lang]?.subtitle ||
-    (lang === "hi" ? "मध्य प्रदेश — राष्ट्रीय उद्यान" : "Madhya Pradesh — National Parks");
+    (lang === "hi"
+      ? "मध्य प्रदेश — राष्ट्रीय उद्यान"
+      : "Madhya Pradesh — National Parks");
 
   return (
     <main className="relative min-h-screen text-white">
       <div className="relative z-10 mx-auto max-w-7xl px-4 pt-6">
         <div className="flex items-center justify-between">
           <HeroHeader title="The Jungle Journey" subtitle={subtitle} />
-          <LanguageSwitch />
+          {/* Removed in-page LanguageSwitch; Navbar already has it */}
         </div>
       </div>
 

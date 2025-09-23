@@ -1,48 +1,46 @@
-// src/components/LanguageSwitch.jsx
 "use client";
 
-import { useMemo, useCallback } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
-export default function LanguageSwitch({ className = "" }) {
+function setQuery(params, key, val) {
+  const p = new URLSearchParams(params.toString());
+  if (val) p.set(key, val);
+  else p.delete(key);
+  return p.toString();
+}
+
+export default function LanguageSwitch() {
   const pathname = usePathname();
+  const params = useSearchParams();
   const router = useRouter();
-  const sp = useSearchParams();
 
-  // current language -> "en" | "hi"
-  const lang = (sp?.get("lang") === "hi" ? "hi" : "en");
+  const lang = params.get("lang") === "hi" ? "hi" : "en";
 
-  // build a new query string but with lang replaced
-  const makeHref = useCallback((nextLang) => {
-    const params = new URLSearchParams(sp?.toString() || "");
-    if (nextLang) params.set("lang", nextLang);
-    else params.delete("lang");
-    return `${pathname}?${params.toString()}`;
-  }, [pathname, sp]);
+  const go = (nextLang) => {
+    const qs = setQuery(params, "lang", nextLang === "en" ? null : "hi");
+    router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  };
 
-  const other = lang === "hi" ? "en" : "hi";
-  const labels = useMemo(() => ({
-    en: { self: "English", other: "हिंदी" },
-    hi: { self: "हिंदी", other: "English" },
-  }), []);
+  const baseBtn =
+    "px-3 py-1 rounded-full text-sm border transition select-none";
+  const active = "bg-emerald-600 border-emerald-500 text-white";
+  const idle = "bg-white/10 border-white/20 text-white/80 hover:bg-white/15";
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      {/* current */}
-      <span
-        aria-label="current language"
-        className="select-none rounded-full border border-green-400/40 bg-green-700/20 px-3 py-1 text-xs font-medium text-green-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-      >
-        {labels[lang].self}
-      </span>
-
-      {/* switch button */}
+    <div className="flex items-center gap-2">
       <button
         type="button"
-        onClick={() => router.push(makeHref(other))}
-        className="rounded-full border border-zinc-500/50 bg-zinc-800/50 px-3 py-1 text-xs font-medium text-zinc-100 hover:bg-zinc-700/60 hover:border-zinc-400 transition"
+        onClick={() => go("en")}
+        className={`${baseBtn} ${lang === "en" ? active : idle}`}
       >
-        {labels[lang].other}
+        English
+      </button>
+      <button
+        type="button"
+        onClick={() => go("hi")}
+        className={`${baseBtn} ${lang === "hi" ? active : idle}`}
+      >
+        हिंदी
       </button>
     </div>
   );
