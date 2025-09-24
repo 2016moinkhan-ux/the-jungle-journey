@@ -1,5 +1,5 @@
 // src/firebase/firebase.js
-// Client-safe Firebase bootstrap (App Router friendly)
+// Client-safe Firebase bootstrap (Next.js App Router friendly)
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import {
@@ -9,7 +9,7 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 
-// Read from NEXT_PUBLIC_* envs (required on client)
+// Read from NEXT_PUBLIC_* envs (must exist on client & Vercel)
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -19,31 +19,38 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// ---- Core singletons ----
+// Single app instance
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Debug (optional): uncomment while testing
-// if (typeof window !== "undefined") {
-//   const { apiKey, authDomain, projectId } = app.options;
-//   console.log("[FIREBASE CONFIG]", { apiKey, authDomain, projectId });
-// }
-
-// We only create Auth/Provider on the client
+// ---- Lazy singletons (client only) ----
 let _auth = null;
 let _googleProvider = null;
 
+/**
+ * Safe getter (prefer this inside client components)
+ */
 export function getClientAuth() {
   if (typeof window === "undefined") return null; // never construct on server
   if (!_auth) {
     _auth = getAuth(app);
-    // Persist login on the browser
-    setPersistence(_auth, browserLocalPersistence).catch((e) =>
-      console.error("Auth persistence error:", e)
-    );
+    setPersistence(_auth, browserLocalPersistence).catch((e) => {
+      console.error("[firebase] setPersistence error:", e);
+    });
   }
   return _auth;
 }
 
+/**
+ * Backward-compat: some files import { auth } directly.
+ * On server it stays null (so SSR won't instantiate auth).
+ * On client it lazily resolves to the same singleton.
+ */
+export const auth =
+  typeof window === "undefined" ? null : getClientAuth();
+
+/**
+ * Google provider (client only)
+ */
 export function getGoogleProvider() {
   if (typeof window === "undefined") return null;
   if (!_googleProvider) {
@@ -53,5 +60,4 @@ export function getGoogleProvider() {
   return _googleProvider;
 }
 
-// If you still need access to the app itself:
 export { app };
