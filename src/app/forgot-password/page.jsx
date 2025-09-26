@@ -1,29 +1,11 @@
+// src/app/forgot-password/page.jsx
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/AuthContext";
 
-/* --------- Wrapper page (adds Suspense) --------- */
-export default function ForgotPasswordPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-[70vh] flex items-center justify-center">
-          <div className="animate-pulse text-center">
-            <div className="w-12 h-12 rounded-full border-4 border-white/40 border-t-white mx-auto mb-4 animate-spin" />
-            <p className="text-white/80 text-sm">Loading…</p>
-          </div>
-        </div>
-      }
-    >
-      <ForgotPasswordInner />
-    </Suspense>
-  );
-}
-
-/* --------- Actual content (uses useSearchParams) --------- */
 function ForgotPasswordInner() {
   const router = useRouter();
   const search = useSearchParams();
@@ -33,7 +15,7 @@ function ForgotPasswordInner() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  // Already logged-in? Is page ki zarurat nahi
+  // Already logged-in? Redirect
   useEffect(() => {
     if (!ready) return;
     if (user) router.replace(nextParam);
@@ -68,17 +50,17 @@ function ForgotPasswordInner() {
           Forgot Password
         </h1>
 
-        {error ? (
+        {error && (
           <div className="mb-4 rounded-md bg-red-600/80 px-4 py-3 text-sm text-white">
             {error}
           </div>
-        ) : null}
+        )}
 
-        {message ? (
+        {message && (
           <div className="mb-4 rounded-md bg-emerald-600/80 px-4 py-3 text-sm text-white">
             {message}
           </div>
-        ) : null}
+        )}
 
         <form onSubmit={handleReset} className="space-y-5">
           <input
@@ -122,5 +104,14 @@ function ForgotPasswordInner() {
         .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
       `}</style>
     </div>
+  );
+}
+
+// ✅ Suspense wrapper
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div className="text-center text-white">Loading…</div>}>
+      <ForgotPasswordInner />
+    </Suspense>
   );
 }
