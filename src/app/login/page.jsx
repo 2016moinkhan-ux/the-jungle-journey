@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import LoginClient from "./LoginClient.jsx";
+import LoginClient from "./LoginClient";
 
 export const dynamic = "force-dynamic";
 
