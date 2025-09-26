@@ -1,6 +1,5 @@
-// src/app/login/page.jsx
 import { Suspense } from "react";
-import LoginClient from "./LoginClient";
+import LoginClient from "./LoginClient.jsx";  // extension zaroori hai
 
 export const dynamic = "force-dynamic";
 
