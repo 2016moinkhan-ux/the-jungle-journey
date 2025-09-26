@@ -1,8 +1,7 @@
 // src/app/login/page.jsx
 import { Suspense } from "react";
-import LoginClient from "./LoginClient.jsx"; // explicit .jsx import
+import LoginClientView from "./LoginClientView";
 
-// Avoid strict prerender for this route
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
@@ -17,7 +16,7 @@ export default function LoginPage() {
         </div>
       }
     >
-      <LoginClient />
+      <LoginClientView />
     </Suspense>
   );
 }

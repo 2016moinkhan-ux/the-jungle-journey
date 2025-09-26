@@ -1,11 +1,7 @@
+// src/components/AuthContext.jsx
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -25,10 +21,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // clear error helper
+  // Helper
   const clearError = () => setError("");
 
-  // --- auth methods ---
+  // --- Auth methods ---
   const login = async (email, password) => {
     try {
       setLoading(true);
@@ -97,7 +93,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // --- listen to firebase user changes ---
+  // --- Listen to Firebase auth user ---
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -126,16 +122,12 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// --- FIXED useAuth hook ---
+// Safe hook (works even if provider not mounted, without crashing)
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-
-  // crash na kare; fallback de do
   if (!ctx) {
     if (typeof window !== "undefined") {
-      console.warn(
-        "useAuth used before <AuthProvider> mounted — returning fallback."
-      );
+      console.warn("useAuth used before <AuthProvider> — returning fallback.");
     }
     return {
       user: null,
@@ -150,6 +142,5 @@ export const useAuth = () => {
       logout: async () => {},
     };
   }
-
   return ctx;
 };
