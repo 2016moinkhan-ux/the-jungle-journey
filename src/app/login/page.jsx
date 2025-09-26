@@ -1,8 +1,9 @@
 // src/app/login/page.jsx
 import { Suspense } from "react";
-import LoginClient from "./LoginClient"; // <-- correct casing, no .jsx
+import LoginClient from "./LoginClient.jsx"; // explicit .jsx import
 
-export const dynamic = "force-dynamic"; // avoid strict prerender for this route
+// Avoid strict prerender for this route
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   return (
@@ -10,8 +11,8 @@ export default function LoginPage() {
       fallback={
         <div className="min-h-[70vh] flex items-center justify-center">
           <div className="animate-pulse text-center">
-            <div className="w-12 h-12 rounded-full border-4 border-white/40 border-t-white mx-auto mb-4 animate-spin" />
-            <p className="text-white/80 text-sm">Loading…</p>
+            <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-white mx-auto mb-4 animate-spin" />
+            <p className="text-white/70 text-sm">Loading…</p>
           </div>
         </div>
       }
