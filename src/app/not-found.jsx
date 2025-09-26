@@ -1,29 +1,41 @@
-// src/app/not-found.jsx
-import Link from "next/link";
+// src/app/layout.jsx  (Server Component — NO "use client")
+import { Suspense } from "react";
+import "./globals.css";
 
-export default function NotFound() {
+import AnimatedJungleBackground from "@/components/AnimatedJungleBackground";
+import { ToastProvider } from "@/components/ToastProvider";
+import Navbar from "@/components/Navbar";
+import { AuthProvider } from "@/components/AuthContext";
+
+export const metadata = {
+  title: "The Jungle Journey",
+  description:
+    "Explore Madhya Pradesh’s National Parks, Wildlife Sanctuaries & Tiger Reserves.",
+};
+
+export default function RootLayout({ children }) {
   return (
-    <main
-      className="min-h-screen grid place-items-center text-white"
-      style={{
-        backgroundImage: "linear-gradient(rgba(5,30,24,.75), rgba(5,30,24,.85)), url('/images/sad-monkey.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="text-center px-6">
-        <h1 className="text-6xl font-extrabold mb-2">404</h1>
-        <p className="text-lg opacity-90">Page not found</p>
+    <html lang="en">
+      <body className="relative min-h-screen text-white overflow-x-hidden">
+        {/* Background slideshow behind everything */}
+        <AnimatedJungleBackground />
 
-        <div className="mt-6">
-          <Link
-            href="/"
-            className="inline-block bg-white text-[#0b3b2e] px-4 py-2 rounded-lg font-medium"
-          >
-            Go Home
-          </Link>
-        </div>
-      </div>
-    </main>
+        {/* App content above bg */}
+        <AuthProvider>
+          <ToastProvider>
+            <div className="relative z-10">
+              {/* ⬇️ Navbar (and anything using useSearchParams/usePathname) inside Suspense */}
+              <Suspense fallback={null}>
+                <Navbar />
+              </Suspense>
+
+              {/* Children may also contain client hooks; keeping them outside is fine.
+                  If kabhi zarurat lage to children ko bhi Suspense me wrap kar sakte hain. */}
+              {children}
+            </div>
+          </ToastProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }
