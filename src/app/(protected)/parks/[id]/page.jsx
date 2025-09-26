@@ -22,9 +22,10 @@ const list = (val, lang) => {
 const siteURL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export async function generateMetadata({ params, searchParams }) {
-  const { id } = params;
-  const langParam = searchParams?.lang;
-  const lang = langParam === "hi" ? "hi" : "en";
+  // 🔧 Next.js v15: await dynamic APIs
+  const { id } = await params;
+  const sp = await searchParams;
+  const lang = sp?.lang === "hi" ? "hi" : "en";
 
   const park = mpParks.find((p) => p.id === id);
 
@@ -106,9 +107,11 @@ export async function generateMetadata({ params, searchParams }) {
 }
 
 /* ---------------- Page UI (Server Component) ---------------- */
-export default function ParkDetailPage({ params, searchParams }) {
-  const id = params?.id || "";
-  const lang = searchParams?.lang === "hi" ? "hi" : "en";
+export default async function ParkDetailPage({ params, searchParams }) {
+  // 🔧 Next.js v15: await dynamic APIs
+  const { id } = await params;
+  const sp = await searchParams;
+  const lang = sp?.lang === "hi" ? "hi" : "en";
   const ui = LBL?.[lang] ?? LBL?.en ?? {};
 
   const park = mpParks.find((p) => p.id === id);

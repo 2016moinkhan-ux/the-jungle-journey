@@ -1,124 +1,160 @@
+// src/app/signup/page.jsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase/firebase";   // ✅ direct import
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/components/AuthContext";
 import PasswordInput from "@/components/PasswordInput";
 
 export default function SignupPage() {
   const router = useRouter();
+  const search = useSearchParams();
+  const nextParam = search.get("next") || "/";
+
+  const { user, ready, loading, error, signup, googleLogin, clearError } = useAuth();
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [confirm, setConfirm] = useState("");
 
-  const friendlyError = (code) => {
-    switch (code) {
-      case "auth/email-already-in-use":
-        return "Is email se account already exist karta hai.";
-      case "auth/invalid-email":
-        return "Email address galat hai.";
-      case "auth/weak-password":
-        return "Password kam se kam 6 characters ka hona chahiye.";
-      default:
-        return "Kuch galat ho gaya. Dobara koshish karein.";
+  // Already logged-in? → redirect
+  useEffect(() => {
+    if (!ready) return;
+    if (user) router.replace(nextParam);
+  }, [ready, user, router, nextParam]);
+
+  if (!ready) {
+    return (
+      <div className="min-h-[70vh] grid place-items-center">
+        <div className="animate-pulse text-center">
+          <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-white mx-auto mb-4 animate-spin" />
+          <p className="text-white/70 text-sm">Loading…</p>
+        </div>
+      </div>
+    );
+  }
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim() || !pwd || !confirm) return;
+    if (pwd !== confirm) {
+      return alert("Passwords do not match");
     }
+    const res = await signup(email.trim(), pwd);
+    if (res.ok) router.replace(nextParam);
   };
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    if (password !== confirmPassword) {
-      setError("Passwords match nahi ho rahe.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, email.trim(), password);
-      router.push("/"); // ✅ success → home
-    } catch (err) {
-      setError(friendlyError(err?.code));
-    } finally {
-      setLoading(false);
-    }
+  const onGoogle = async () => {
+    const res = await googleLogin();
+    if (res.ok) router.replace(nextParam);
   };
 
   return (
-    <div className="min-h-[calc(100vh-0px)] flex items-center justify-center px-4 bg-gradient-to-br from-emerald-900 via-green-900 to-black">
-      <div className="w-full max-w-md rounded-2xl shadow-2xl p-8 sm:p-10 bg-white/10 backdrop-blur-lg border border-white/20 animate-fadeIn">
-        <h1 className="text-4xl font-extrabold text-center text-emerald-300 mb-8 tracking-wide">
-          Create Account
-        </h1>
+    <div className="min-h-[100dvh] grid place-items-center px-4 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black">
+      <div className="w-full max-w-md rounded-2xl bg-neutral-900/70 backdrop-blur-md p-7 shadow-2xl ring-1 ring-white/10">
+        <h1 className="text-2xl font-semibold text-white">Create Account</h1>
+        <p className="text-white/60 text-sm mt-1 mb-6">
+          Jungle Journey me naya account banayein
+        </p>
 
-        {error && (
-          <div className="mb-4 rounded-md bg-red-600/80 px-4 py-3 text-sm text-white">
+        {error ? (
+          <div className="mb-4 rounded-lg bg-red-500/15 text-red-200 px-3 py-2 text-sm ring-1 ring-red-500/30">
             {error}
           </div>
-        )}
+        ) : null}
 
-        <form onSubmit={handleSignup} className="space-y-5">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 outline-none focus:ring-2 focus:ring-emerald-400"
-            required
-          />
+        {/* Google button */}
+        <button
+          type="button"
+          onClick={onGoogle}
+          disabled={loading}
+          className="w-full rounded-xl px-4 py-2.5 font-medium bg-white text-black hover:bg-zinc-200 transition disabled:opacity-60 flex items-center justify-center gap-2"
+        >
+          <GoogleIcon />
+          Continue with Google
+        </button>
 
-          <PasswordInput
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-          />
+        {/* Divider */}
+        <div className="my-5 flex items-center gap-3 text-white/40">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="text-xs">or</span>
+          <div className="h-px flex-1 bg-white/10" />
+        </div>
 
-          <PasswordInput
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm Password"
-          />
+        {/* Signup form */}
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs text-white/70 mb-1">Email</label>
+            <input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => {
+                if (error) clearError();
+                setEmail(e.target.value);
+              }}
+              className="w-full rounded-xl bg-neutral-800/80 focus:bg-neutral-800 outline-none px-3 py-2 ring-1 ring-white/10 focus:ring-white/25 placeholder:text-white/40 text-white"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-white/70 mb-1">Password</label>
+            <PasswordInput
+              value={pwd}
+              onChange={(e) => {
+                if (error) clearError();
+                setPwd(e.target.value);
+              }}
+              placeholder="••••••••"
+              name="password"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-white/70 mb-1">Confirm Password</label>
+            <PasswordInput
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="••••••••"
+              name="confirm"
+            />
+          </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-emerald-600 hover:bg-emerald-500 transition py-3 font-semibold text-white shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full rounded-xl px-4 py-2.5 font-medium bg-white text-black hover:bg-zinc-200 transition disabled:opacity-60"
           >
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? "Creating…" : "Sign Up"}
           </button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-white/80">
-          Already have an account?{" "}
+        <div className="mt-5 text-center text-sm">
+          <span className="text-white/70">Already have an account? </span>
           <Link
-            href="/login"
-            className="text-emerald-300 hover:text-emerald-200 font-medium"
+            href={`/login?next=${encodeURIComponent(nextParam)}`}
+            className="text-white/75 hover:text-white underline underline-offset-4"
+            onClick={() => error && clearError()}
           >
             Login
           </Link>
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.6s ease-out;
-        }
-      `}</style>
     </div>
+  );
+}
+
+/** Google “G” icon */
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden>
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.5 32.6 29.2 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.8 6.1 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11.5 0 19.8-8.1 19.8-19.5 0-1.3-.2-2.2-.2-2.9z"/>
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 18.9 12 24 12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.8 6.1 29.2 4 24 4 16 4 9 8.5 6.3 14.7z"/>
+      <path fill="#4CAF50" d="M24 44c5.1 0 9.7-1.9 13.1-5.1l-6-4.9C29 35.6 26.7 36 24 36c-5.1 0-9.4-3.4-10.9-8l-6.6 5C9.1 39.4 16 44 24 44z"/>
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3C34.7 31.2 29 36 24 36c-6.6 0-12-5.4-12-12 0-1.3.2-2.6.7-3.8l-6.6-5C4.7 17.5 4 20.7 4 24c0 11.1 8.9 20 20 20 11.5 0 19.8-8.1 19.8-19.5 0-1.3-.2-2.2-.2-2.9z"/>
+    </svg>
   );
 }

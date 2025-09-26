@@ -1,21 +1,24 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import LanguageSwitch from "@/components/LanguageSwitch"; // ✅ नया clean component
+import LanguageSwitch from "@/components/LanguageSwitch";
+import LogoutButton from "@/components/LogoutButton";
+import { useAuth } from "@/components/AuthContext"; // <-- IMPORTANT
 
 const NAV_ITEMS = [
   { href: "/", label: { en: "Home", hi: "होम" } },
   { href: "/parks", label: { en: "Parks", hi: "पार्क्स" } },
   { href: "/hotels", label: { en: "Hotels", hi: "होटल्स" } },
-  { href: "/safaris", label: { en: "Safaris", hi: "सफारी" } }, // parks#safaris पर ले जाएगा
+  { href: "/safaris", label: { en: "Safaris", hi: "सफारी" } },
   { href: "/about", label: { en: "About", hi: "परिचय" } },
   { href: "/contact", label: { en: "Contact", hi: "संपर्क" } },
 ];
 
 export default function Navbar() {
+  const { user, ready } = useAuth();           // <-- user state from context
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -29,7 +32,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ✅ Safaris को parks#safaris से link किया गया
   const items = useMemo(() => {
     return NAV_ITEMS.map((it) => {
       const base =
@@ -42,17 +44,14 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b backdrop-blur transition-colors
-        ${scrolled ? "bg-neutral-950/90 border-white/10"
-                   : "bg-neutral-950/70 border-white/5"}`}
+      className={`sticky top-0 z-20 border-b backdrop-blur transition-colors
+        ${scrolled ? "bg-neutral-950/90 border-white/10" : "bg-neutral-950/70 border-white/5"}`}
     >
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         {/* Brand */}
         <Link
           href={`/?lang=${lang}`}
-          className="flex items-center gap-2 font-semibold text-lg
-                     text-emerald-400 hover:text-emerald-300
-                     drop-shadow-[0_1px_1px_rgba(0,0,0,.6)]"
+          className="flex items-center gap-2 font-semibold text-lg text-emerald-400 hover:text-emerald-300"
         >
           <span role="img" aria-label="leaf">🌿</span>
           <span className="hidden sm:inline">The Jungle Journey</span>
@@ -73,8 +72,35 @@ export default function Navbar() {
               {item.label[lang]}
             </Link>
           ))}
-          {/* ✅ Language Switch */}
+
           <LanguageSwitch />
+
+          {/* --- Right side auth area --- */}
+          {!ready ? (
+            <div className="text-white/70 text-sm">…</div>
+          ) : user ? (
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline text-white/80 text-sm max-w-[180px] truncate">
+                {user.email}
+              </span>
+              <LogoutButton />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/login?next=${encodeURIComponent(pathname + (searchParams?.toString() ? `?${searchParams}` : ""))}`}
+                className="rounded-md bg-white/10 hover:bg-white/20 text-sm px-3 py-1.5"
+              >
+                Login
+              </Link>
+              <Link
+                href={`/signup?next=${encodeURIComponent(pathname + (searchParams?.toString() ? `?${searchParams}` : ""))}`}
+                className="rounded-md bg-emerald-600 hover:bg-emerald-500 text-sm px-3 py-1.5 text-white"
+              >
+                Sign up
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Hamburger */}
@@ -98,7 +124,7 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black"
+              className="fixed inset-0 z-10 bg-black"
               onClick={() => setOpen(false)}
             />
             <motion.div
@@ -107,12 +133,10 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed right-0 top-0 z-50 h-full w-64 bg-neutral-900 shadow-lg"
+              className="fixed right-0 top-0 z-20 h-full w-64 bg-neutral-900 shadow-lg"
             >
               <div className="flex items-center justify-between p-6">
-                <span className="font-semibold text-lg text-emerald-300">
-                  🌿 Jungle Journey
-                </span>
+                <span className="font-semibold text-lg text-emerald-300">🌿 Jungle Journey</span>
                 <button onClick={() => setOpen(false)} aria-label="Close menu">✕</button>
               </div>
 
@@ -131,10 +155,39 @@ export default function Navbar() {
                     {item.label[lang]}
                   </Link>
                 ))}
-                {/* ✅ Mobile me bhi Language Switch */}
+
                 <div className="mt-4">
                   <LanguageSwitch />
                 </div>
+
+                {/* Mobile auth area */}
+                {!ready ? (
+                  <div className="text-white/70 text-sm mt-2">…</div>
+                ) : user ? (
+                  <div className="mt-2 flex items-center justify-between gap-3">
+                    <span className="text-white/80 text-sm max-w-[180px] truncate">
+                      {user.email}
+                    </span>
+                    <LogoutButton />
+                  </div>
+                ) : (
+                  <div className="mt-2 flex items-center gap-2">
+                    <Link
+                      href={`/login?next=${encodeURIComponent(pathname + (searchParams?.toString() ? `?${searchParams}` : ""))}`}
+                      onClick={() => setOpen(false)}
+                      className="rounded-md bg-white/10 hover:bg-white/20 text-sm px-3 py-1.5"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href={`/signup?next=${encodeURIComponent(pathname + (searchParams?.toString() ? `?${searchParams}` : ""))}`}
+                      onClick={() => setOpen(false)}
+                      className="rounded-md bg-emerald-600 hover:bg-emerald-500 text-sm px-3 py-1.5 text-white"
+                    >
+                      Sign up
+                    </Link>
+                  </div>
+                )}
               </div>
             </motion.div>
           </>

@@ -1,44 +1,155 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "@/firebase/firebase";        // ✅ सिर्फ auth चाहिए
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
   sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  // clear error helper
+  const clearError = () => setError("");
+
+  // --- auth methods ---
+  const login = async (email, password) => {
+    try {
+      setLoading(true);
+      clearError();
+      await signInWithEmailAndPassword(auth, email, password);
+      return { ok: true };
+    } catch (err) {
+      setError(err.message);
+      return { ok: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signup = async (email, password) => {
+    try {
+      setLoading(true);
+      clearError();
+      await createUserWithEmailAndPassword(auth, email, password);
+      return { ok: true };
+    } catch (err) {
+      setError(err.message);
+      return { ok: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const googleLogin = async () => {
+    try {
+      setLoading(true);
+      clearError();
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      return { ok: true };
+    } catch (err) {
+      setError(err.message);
+      return { ok: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const forgot = async (email) => {
+    try {
+      setLoading(true);
+      clearError();
+      await sendPasswordResetEmail(auth, email);
+      return { ok: true };
+    } catch (err) {
+      setError(err.message);
+      return { ok: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      setLoading(true);
+      await signOut(auth);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- listen to firebase user changes ---
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u ?? null);
+      setUser(u);
       setReady(true);
     });
     return () => unsub();
   }, []);
 
-  const login = (email, password) =>
-    signInWithEmailAndPassword(auth, email.trim(), password);
-
-  const signup = (email, password) =>
-    createUserWithEmailAndPassword(auth, email.trim(), password);
-
-  const forgot = (email) => sendPasswordResetEmail(auth, email.trim());
-
-  const logout = () => signOut(auth);
-
   return (
-    <AuthContext.Provider value={{ user, ready, login, signup, forgot, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        ready,
+        loading,
+        error,
+        clearError,
+        login,
+        signup,
+        googleLogin,
+        forgot,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+// --- FIXED useAuth hook ---
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+
+  // crash na kare; fallback de do
+  if (!ctx) {
+    if (typeof window !== "undefined") {
+      console.warn(
+        "useAuth used before <AuthProvider> mounted — returning fallback."
+      );
+    }
+    return {
+      user: null,
+      ready: false,
+      loading: false,
+      error: "",
+      clearError: () => {},
+      login: async () => ({ ok: false }),
+      signup: async () => ({ ok: false }),
+      googleLogin: async () => ({ ok: false }),
+      forgot: async () => ({ ok: false }),
+      logout: async () => {},
+    };
+  }
+
+  return ctx;
+};

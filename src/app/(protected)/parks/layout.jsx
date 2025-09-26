@@ -1,21 +1,48 @@
-import JungleBackdrop from "@/components/JungleBackdrop";
-import Fireflies from "@/components/Fireflies";
-import Navbar from "@/components/Navbar";
+// src/app/(protected)/layout.jsx
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { getClientAuth } from "@/firebase/firebase";
 
 export default function ProtectedLayout({ children }) {
-  return (
-    <div className="relative min-h-screen">
-      {/* Background */}
-      <div className="absolute inset-0 z-0">
-        <JungleBackdrop />
-        <Fireflies />
-      </div>
+  const router = useRouter();
+  const [checking, setChecking] = useState(true);
+  const [isAuthed, setIsAuthed] = useState(false);
 
-      {/* Foreground */}
-      <div className="relative z-10">
-        <Navbar />
-        {children}
+  useEffect(() => {
+    const auth = getClientAuth();
+    if (!auth) {
+      setChecking(false);
+      return;
+    }
+
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthed(true);
+      } else {
+        setIsAuthed(false);
+        router.replace("/login");
+      }
+      setChecking(false);
+    });
+
+    return () => unsub();
+  }, [router]);
+
+  if (checking) {
+    return (
+      <div className="flex h-screen items-center justify-center text-emerald-200">
+        Loading...
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (!isAuthed) {
+    return null; // jab tak redirect nahi hota blank dikhao
+  }
+
+  // ⚡ FIX: Yaha Navbar include nahi karna hai
+  return <>{children}</>;
 }

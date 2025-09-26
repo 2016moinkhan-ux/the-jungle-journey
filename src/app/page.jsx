@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthContext";
 
 const tilesTop = [
   { src: "/landing/tiger.jpg", alt: "Tiger" },
@@ -20,19 +21,22 @@ const tilesBottom = [
 
 export default function Home() {
   const router = useRouter();
+  const { user, ready } = useAuth();
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    // Start fade-out after 4 seconds
-    const timer1 = setTimeout(() => setFadeOut(true), 4000);
-    // Redirect after fade animation completes (4s + 0.6s)
-    const timer2 = setTimeout(() => router.replace("/parks"), 4600);
+    if (!ready) return;              // auth init na ho to wait
+    if (!user) return;               // logged-out: no auto-redirect
+
+    // logged-in: 3s baad fade + redirect to /parks
+    const t1 = setTimeout(() => setFadeOut(true), 3000);
+    const t2 = setTimeout(() => router.replace("/parks"), 3700);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
-  }, [router]);
+  }, [ready, user, router]);
 
   return (
     <main
@@ -72,20 +76,11 @@ export default function Home() {
       {/* animations */}
       <style jsx global>{`
         @keyframes jjFloat {
-          0% {
-            transform: translateY(0) rotate(var(--jj-rot)) scale(1);
-          }
-          50% {
-            transform: translateY(-10px) rotate(var(--jj-rot)) scale(1.05);
-          }
-          100% {
-            transform: translateY(0) rotate(var(--jj-rot)) scale(1);
-          }
+          0% { transform: translateY(0) rotate(var(--jj-rot)) scale(1); }
+          50% { transform: translateY(-10px) rotate(var(--jj-rot)) scale(1.05); }
+          100% { transform: translateY(0) rotate(var(--jj-rot)) scale(1); }
         }
-        .jj-tile {
-          animation: jjFloat 3s ease-in-out infinite;
-          will-change: transform;
-        }
+        .jj-tile { animation: jjFloat 3s ease-in-out infinite; will-change: transform; }
       `}</style>
     </main>
   );

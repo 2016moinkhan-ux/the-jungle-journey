@@ -1,3 +1,4 @@
+// src/components/AnimatedJungleBackground.jsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -12,27 +13,29 @@ export default function AnimatedJungleBackground() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
-    }, 8000); // har 8 sec me change
-    return () => clearInterval(interval);
+    const id = setInterval(() => {
+      setIndex((p) => (p + 1) % images.length);
+    }, 8000);
+    return () => clearInterval(id);
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
+    // pointer-events-none -> background click block na kare
+    // z-0 -> safe stacking; foreground ko z-10 de denge
+    <div className="fixed inset-0 z-0 pointer-events-none">
       {images.map((src, i) => (
-        <img
+        <div
           key={i}
-          src={src}
-          alt={`Background ${i + 1}`}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+          className={`absolute inset-0 bg-center bg-cover bg-fixed transition-opacity duration-1000 ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
+          style={{ backgroundImage: `url(${src})` }}
+          aria-hidden
         />
       ))}
 
-      {/* 🔲 readability overlay */}
-      <div className="absolute inset-0 bg-black/50"></div>
+      {/* readability overlay */}
+      <div className="absolute inset-0 bg-black/50" aria-hidden />
     </div>
   );
 }

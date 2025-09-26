@@ -1,34 +1,41 @@
+// src/components/RequireAuth.jsx
 "use client";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "@/firebase/firebase";
+import { useAuth } from "@/components/AuthContext"; // use existing context
 
 export default function RequireAuth({ children }) {
   const router = useRouter();
-  const [status, setStatus] = useState("loading"); // loading | authed | guest
+  const { user, ready } = useAuth(); // { user, ready } from AuthContext
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setStatus("authed");
-      } else {
-        setStatus("guest");
-        router.replace("/login");
-      }
-    });
-    return () => unsub();
-  }, [router]);
-
-  if (status === "loading") {
+  // Firebase state restore होते समय
+  if (!ready) {
     return (
-      <div className="grid place-items-center min-h-screen">
-        <div className="animate-pulse text-gray-600">Checking session…</div>
+      <div className="min-h-[60vh] grid place-items-center text-white/80">
+        Loading...
       </div>
     );
   }
 
-  if (status === "guest") return null; // redirect hone tak blank
+  // Not logged in → /login with ?next=
+  useEffect(() => {
+    if (ready && !user) {
+      const next = encodeURIComponent(
+        window.location.pathname + (window.location.search || "")
+      );
+      router.replace(`/login?next=${next}`);
+    }
+  }, [ready, user, router]);
+
+  // Redirect होने तक छोटा placeholder
+  if (!user) {
+    return (
+      <div className="min-h-[60vh] grid place-items-center text-white/60">
+        Loading...
+      </div>
+    );
+  }
 
   return <>{children}</>;
 }
