@@ -37,12 +37,12 @@ export default function LoginClient() {
     e.preventDefault();
     if (!email.trim() || !pwd) return;
     const res = await login(email.trim(), pwd);
-    if (res?.ok) router.replace(nextParam);
+    if (res.ok) router.replace(nextParam);
   };
 
   const onGoogle = async () => {
     const res = await googleLogin();
-    if (res?.ok) router.replace(nextParam);
+    if (res.ok) router.replace(nextParam);
   };
 
   return (
@@ -104,7 +104,7 @@ export default function LoginClient() {
             />
           </div>
 
-          <button
+        <button
             type="submit"
             disabled={loading}
             className="w-full rounded-xl px-4 py-2.5 font-medium bg-white text-black hover:bg-zinc-200 transition disabled:opacity-60"

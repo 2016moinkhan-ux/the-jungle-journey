@@ -1,8 +1,9 @@
 // src/app/login/page.jsx
 import { Suspense } from "react";
-import LoginClient from "./LoginClient";
+import LoginClient from "./LoginClient.jsx";
 
-export const dynamic = "force-dynamic"; // prerender errors se bachao
+// Vercel ke strict prerender ko loose rakhne ke liye (safe)
+export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   return (
