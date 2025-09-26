@@ -2,7 +2,6 @@
 import { Suspense } from "react";
 import LoginClient from "./LoginClient";
 
-// CSR bailout ko stable rakhne ke liye prerender ko relax karte hain
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
