@@ -1,11 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/AuthContext";
 
+/* --------- Wrapper page (adds Suspense) --------- */
 export default function ForgotPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[70vh] flex items-center justify-center">
+          <div className="animate-pulse text-center">
+            <div className="w-12 h-12 rounded-full border-4 border-white/40 border-t-white mx-auto mb-4 animate-spin" />
+            <p className="text-white/80 text-sm">Loading…</p>
+          </div>
+        </div>
+      }
+    >
+      <ForgotPasswordInner />
+    </Suspense>
+  );
+}
+
+/* --------- Actual content (uses useSearchParams) --------- */
+function ForgotPasswordInner() {
   const router = useRouter();
   const search = useSearchParams();
   const nextParam = search.get("next") || "/";
