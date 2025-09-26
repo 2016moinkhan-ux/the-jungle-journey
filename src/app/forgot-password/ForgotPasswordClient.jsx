@@ -1,4 +1,3 @@
-// src/app/forgot-password/ForgotPasswordClient.jsx
 "use client";
 
 import { useEffect, useState } from "react";
