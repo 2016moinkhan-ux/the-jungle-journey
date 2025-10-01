@@ -10,6 +10,8 @@ import {
   signInWithPopup,
   sendPasswordResetEmail,
   signOut,
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 
@@ -21,7 +23,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Helper
   const clearError = () => setError("");
 
   // --- Auth methods ---
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       clearError();
+      await setPersistence(auth, browserLocalPersistence); // ✅ ensure persistent login
       await signInWithEmailAndPassword(auth, email, password);
       return { ok: true };
     } catch (err) {
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       clearError();
+      await setPersistence(auth, browserLocalPersistence); // ✅ new accounts also persist
       await createUserWithEmailAndPassword(auth, email, password);
       return { ok: true };
     } catch (err) {
@@ -58,6 +61,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       clearError();
       const provider = new GoogleAuthProvider();
+      await setPersistence(auth, browserLocalPersistence); // ✅ google login persists too
       await signInWithPopup(auth, provider);
       return { ok: true };
     } catch (err) {
@@ -122,7 +126,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Safe hook (works even if provider not mounted, without crashing)
+// Safe hook
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) {
