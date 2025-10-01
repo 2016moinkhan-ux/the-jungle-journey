@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/components/AuthContext";
@@ -21,7 +21,15 @@ const REST_ROT_BOT   = [-12, -5, 9, 12];
 const EXIT_ROT_TOP   = [-145, 145, -145, 145];
 const EXIT_ROT_BOT   = [145, -145, 145, -145];
 
-export default function SplashContinuous() {
+export default function ProtectedSplash() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <SplashContinuous />
+    </Suspense>
+  );
+}
+
+function SplashContinuous() {
   const router = useRouter();
   const sp = useSearchParams();
   const { user, ready } = useAuth();
