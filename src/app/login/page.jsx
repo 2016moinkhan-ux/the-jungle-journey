@@ -2,22 +2,25 @@
 import { Suspense } from "react";
 import LoginClient from "./LoginClient";
 
-// (optional safety) prerender ko avoid karne ke liye:
+// prerender avoid karne ke liye
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="min-h-[70vh] flex items-center justify-center bg-white">
           <div className="animate-pulse text-center">
-            <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-white mx-auto mb-4 animate-spin" />
-            <p className="text-white/70 text-sm">Loading…</p>
+            <div className="w-12 h-12 rounded-full border-4 border-gray-300 border-t-emerald-500 mx-auto mb-4 animate-spin" />
+            <p className="text-gray-600 text-sm">Loading…</p>
           </div>
         </div>
       }
     >
-      <LoginClient />
+      {/* ✅ White background apply */}
+      <div className="min-h-screen bg-white text-neutral-900">
+        <LoginClient />
+      </div>
     </Suspense>
   );
 }

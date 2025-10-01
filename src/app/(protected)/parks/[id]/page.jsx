@@ -134,40 +134,41 @@ export default async function ParkDetailPage({ params, searchParams }) {
   const mapLink = park.mapLink;
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-white">
+    // ✅ Light theme: white bg + dark text
+    <main className="min-h-screen bg-white text-neutral-900">
       {/* Top bar */}
       <div className="mx-auto max-w-6xl px-4 py-5 flex items-center justify-between">
         <Link
           href={`/parks?lang=${lang}`}
-          className="rounded-md border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10"
+          className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm hover:bg-neutral-50"
         >
           ← {lang === "hi" ? "सभी पार्क" : "All Parks"}
         </Link>
-        <div className="text-sm opacity-80">The Jungle Journey</div>
+        <div className="text-sm text-neutral-600">The Jungle Journey</div>
       </div>
 
       {/* Hero card */}
       <section className="mx-auto max-w-6xl px-4">
-        <div className="overflow-hidden rounded-2xl card-surface">
+        <div className="overflow-hidden rounded-2xl bg-white border border-neutral-200 shadow-sm">
           {/* Image + overlay */}
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-neutral-100">
             <img
               src={park.image}
               alt={name}
               className="h-full w-full object-cover"
             />
 
-            {/* dark gradient veil */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            {/* gradient veil (keep for readability on bright photos) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
 
             {/* Overlay */}
             <div className="absolute left-5 right-5 bottom-5 md:left-7 md:right-7 md:bottom-6">
-              <div className="fade-slide-in text-shadow-soft">
-                <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+              <div className="drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]">
+                <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
                   {name}
                 </h1>
                 {district && (
-                  <p className="mt-1 text-sm md:text-base text-white/80">
+                  <p className="mt-1 text-sm md:text-base text-white/90">
                     {district}
                   </p>
                 )}
@@ -178,12 +179,12 @@ export default async function ParkDetailPage({ params, searchParams }) {
                 {/* Quick chips */}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {bestTime && (
-                    <span className="chip chip-glow">
+                    <span className="rounded-md bg-white/90 text-neutral-900 px-2 py-1 text-xs font-medium">
                       {lang === "hi" ? "उपयुक्त समय" : "Best time"}: {bestTime}
                     </span>
                   )}
                   {!!safariTypes.length && (
-                    <span className="chip chip-glow">
+                    <span className="rounded-md bg-white/90 text-neutral-900 px-2 py-1 text-xs font-medium">
                       {lang === "hi" ? "सफारी" : "Safari"}: {safariTypes.join(", ")}
                     </span>
                   )}
@@ -199,7 +200,7 @@ export default async function ParkDetailPage({ params, searchParams }) {
                 href={official}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium hover:bg-emerald-500"
+                className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
               >
                 {lang === "hi" ? "Official Permit" : "Official Permit"}
               </a>
@@ -209,7 +210,7 @@ export default async function ParkDetailPage({ params, searchParams }) {
                 href={website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium hover:bg-indigo-500"
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500"
               >
                 {lang === "hi" ? "Park Website" : "Park Website"}
               </a>
@@ -219,7 +220,7 @@ export default async function ParkDetailPage({ params, searchParams }) {
                 href={mapLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-md bg-amber-600 px-3 py-2 text-sm font-medium hover:bg-amber-500"
+                className="rounded-md bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-500"
               >
                 {lang === "hi" ? "Google Map" : "Google Map"}
               </a>
@@ -232,20 +233,20 @@ export default async function ParkDetailPage({ params, searchParams }) {
       <section className="mx-auto max-w-6xl px-4 py-8">
         <div className="grid gap-6 md:grid-cols-2">
           {/* About */}
-          <article className="card-surface p-6">
+          <article className="bg-white border border-neutral-200 shadow-sm rounded-xl p-6">
             <h2 className="mb-2 text-lg font-semibold">
               {lang === "hi" ? "परिचय" : "About"}
             </h2>
-            <p className="text-sm leading-relaxed text-white/80">{desc}</p>
+            <p className="text-sm leading-relaxed text-neutral-700">{desc}</p>
           </article>
 
           {/* Quick facts */}
-          <article className="card-surface p-6">
+          <article className="bg-white border border-neutral-200 shadow-sm rounded-xl p-6">
             <h2 className="mb-2 text-lg font-semibold">
               {lang === "hi" ? "मुख्य जानकारी" : "Quick Facts"}
             </h2>
 
-            <ul className="space-y-1.5 text-sm text-white/80">
+            <ul className="space-y-1.5 text-sm text-neutral-700">
               {bestTime && (
                 <li>
                   <span className="font-medium">
@@ -318,7 +319,7 @@ export default async function ParkDetailPage({ params, searchParams }) {
       <div className="mx-auto max-w-6xl px-4 pb-12">
         <Link
           href={`/parks?lang=${lang}`}
-          className="inline-block rounded-md border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10"
+          className="inline-block rounded-md border border-neutral-200 px-3 py-1.5 text-sm hover:bg-neutral-50"
         >
           ← {lang === "hi" ? "वापस सूची पर" : "Back to list"}
         </Link>

@@ -15,11 +15,11 @@ const list = (v, lang) => {
 
 /**
  * Props (client-safe)
- * - q, setQ                       → search text state
- * - district, setDistrict         → selected district
- * - safari, setSafari             → selected safari type
- * - parks OR items                → array of park objects
- * - lang                          → "en" | "hi"
+ * - q, setQ
+ * - district, setDistrict
+ * - safari, setSafari
+ * - parks OR items
+ * - lang: "en" | "hi"
  */
 export default function ParkFilters(props) {
   const {
@@ -36,11 +36,12 @@ export default function ParkFilters(props) {
 
   const base = Array.isArray(parks) ? parks : Array.isArray(items) ? items : [];
 
-  // labels (client-safe)
   const L = {
-    searchPh:
-      lang === "hi" ? "खोजें (उदा. पेंच)" : "Search park (e.g. Pench)",
+    searchLabel: lang === "hi" ? "खोजें" : "Search",
+    searchPh: lang === "hi" ? "खोजें (उदा. पेंच)" : "Search park (e.g. Pench)",
+    districtLabel: lang === "hi" ? "ज़िला" : "District",
     districtAll: lang === "hi" ? "सभी ज़िले" : "All districts",
+    safariLabel: lang === "hi" ? "सफ़ारी" : "Safari",
     safariAll: lang === "hi" ? "सभी सफ़ारी" : "All safaris",
   };
 
@@ -50,11 +51,9 @@ export default function ParkFilters(props) {
     const sset = new Set();
 
     base.forEach((p) => {
-      // district
       const d = pick(p?.district, lang)?.trim();
       if (d) dset.add(d);
 
-      // safaris
       list(p?.safariTypes, lang).forEach((s) => {
         const v = (s || "").trim();
         if (v) sset.add(v);
@@ -67,48 +66,76 @@ export default function ParkFilters(props) {
     };
   }, [base, lang]);
 
+  const inputBase =
+    "w-full h-10 rounded-lg bg-white border border-neutral-300 px-3 text-sm text-neutral-800 placeholder:text-neutral-400 outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+
+  const selectBase =
+    "w-full h-10 rounded-lg bg-white border border-neutral-300 px-3 text-sm text-neutral-800 outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white";
+
   return (
-    <div className="mb-6 grid gap-3 sm:grid-cols-3">
-      {/* Search */}
-      <input
-        type="text"
-        value={q}
-        onChange={(e) => setQ?.(e.target.value)}
-        placeholder={L.searchPh}
-        className="w-full rounded-xl border border-emerald-800/30 bg-emerald-950/40 px-3 py-2 text-emerald-50 placeholder:text-emerald-200/60 focus:border-emerald-400/60 focus:outline-none"
-      />
+    <div className="rounded-2xl border border-neutral-200 bg-white p-3 sm:p-4 shadow-sm">
+      <div className="grid gap-3 sm:grid-cols-3">
+        {/* Search */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="park-search" className="text-xs text-neutral-600">
+            {L.searchLabel}
+          </label>
+          <input
+            id="park-search"
+            type="text"
+            value={q}
+            onChange={(e) => setQ?.(e.target.value)}
+            placeholder={L.searchPh}
+            autoCapitalize="none"
+            autoCorrect="off"
+            className={inputBase}
+          />
+        </div>
 
-      {/* District */}
-      <select
-        value={district}
-        onChange={(e) => setDistrict?.(e.target.value)}
-        className="w-full rounded-xl border border-emerald-800/30 bg-emerald-950/40 px-3 py-2 text-emerald-50 focus:border-emerald-400/60 focus:outline-none"
-      >
-        <option value="">{L.districtAll}</option>
-        {districts
-          .filter((d) => d) // remove the leading ""
-          .map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-      </select>
+        {/* District */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="park-district" className="text-xs text-neutral-600">
+            {L.districtLabel}
+          </label>
+          <select
+            id="park-district"
+            value={district}
+            onChange={(e) => setDistrict?.(e.target.value)}
+            className={selectBase}
+          >
+            <option value="">{L.districtAll}</option>
+            {districts
+              .filter((d) => d)
+              .map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+          </select>
+        </div>
 
-      {/* Safari type */}
-      <select
-        value={safari}
-        onChange={(e) => setSafari?.(e.target.value)}
-        className="w-full rounded-xl border border-emerald-800/30 bg-emerald-950/40 px-3 py-2 text-emerald-50 focus:border-emerald-400/60 focus:outline-none"
-      >
-        <option value="">{L.safariAll}</option>
-        {safaris
-          .filter((s) => s) // remove the leading ""
-          .map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-      </select>
+        {/* Safari */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="park-safari" className="text-xs text-neutral-600">
+            {L.safariLabel}
+          </label>
+          <select
+            id="park-safari"
+            value={safari}
+            onChange={(e) => setSafari?.(e.target.value)}
+            className={selectBase}
+          >
+            <option value="">{L.safariAll}</option>
+            {safaris
+              .filter((s) => s)
+              .map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+          </select>
+        </div>
+      </div>
     </div>
   );
 }

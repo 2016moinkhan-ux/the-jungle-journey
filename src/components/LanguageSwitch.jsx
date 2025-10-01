@@ -22,9 +22,11 @@ export default function LanguageSwitch() {
   };
 
   const baseBtn =
-    "px-3 py-1 rounded-full text-sm border transition select-none";
-  const active = "bg-emerald-600 border-emerald-500 text-white";
-  const idle = "bg-white/10 border-white/20 text-white/80 hover:bg-white/15";
+    "px-3 py-1 rounded-full text-sm border font-medium transition select-none";
+  const active =
+    "bg-emerald-600 border-emerald-600 text-white shadow-sm hover:bg-emerald-500";
+  const idle =
+    "bg-white border-neutral-300 text-neutral-700 hover:bg-neutral-100";
 
   return (
     <div className="flex items-center gap-2">

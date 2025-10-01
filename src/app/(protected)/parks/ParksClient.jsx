@@ -1,24 +1,25 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import ParkCard from "@/components/ParkCard";
 import ParkFilters from "@/components/ParkFilters";
 
-// helper: {en,hi} या string → चुनी हुई भाषा की string
+// Helper: {en,hi} ya plain string → selected language string
 const pick = (v, lang) =>
   typeof v === "string" ? v : v?.[lang] || v?.en || "";
 
 /**
- * ParksClient:
- * - props: parks (array), lang ("en"|"hi")
- * - अंदर filters (search, district, safari) + cards दिखेंगे
+ * ParksClient
+ * props:
+ *  - parks: array of park objects
+ *  - lang: "en" | "hi"
  */
 export default function ParksClient({ parks = [], lang = "en" }) {
   const [q, setQ] = useState("");
   const [district, setDistrict] = useState("");
   const [safari, setSafari] = useState("");
 
-  // filter parks
+  // Filtered parks (memoized)
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
 
@@ -44,8 +45,8 @@ export default function ParksClient({ parks = [], lang = "en" }) {
   }, [parks, lang, q, district, safari]);
 
   return (
-    <>
-      {/* Filters section ko anchor banaya */}
+    <section className="space-y-5 md:space-y-6">
+      {/* Filters section (anchor-ready for /parks#safaris) */}
       <div id="safaris">
         <ParkFilters
           q={q}
@@ -59,12 +60,31 @@ export default function ParksClient({ parks = [], lang = "en" }) {
         />
       </div>
 
-      {/* Cards */}
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {filtered.map((p) => (
-          <ParkCard key={p.id} park={p} lang={lang} />
-        ))}
+      {/* Small summary / count */}
+      + <div className="mt-2 md:mt-3 text-sm text-neutral-600">
+        {lang === "hi" ? "कुल परिणाम: " : "Results: "}
+        <span className="font-medium text-neutral-900">{filtered.length}</span>
       </div>
-    </>
+
+      {/* Empty state */}
+      {filtered.length === 0 && (
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-6 text-center">
+          <p className="text-neutral-700">
+            {lang === "hi"
+              ? "कोई परिणाम नहीं मिला। फ़िल्टर बदलकर देखें।"
+              : "No results found. Try adjusting the filters."}
+          </p>
+        </div>
+      )}
+
+      {/* Cards grid */}
+      {filtered.length > 0 && (
+        <div className="grid gap-5 md:gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((p) => (
+            <ParkCard key={p.id} park={p} lang={lang} />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }

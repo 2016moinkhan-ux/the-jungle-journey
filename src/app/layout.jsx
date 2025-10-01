@@ -1,10 +1,10 @@
 // src/app/layout.jsx
 import "./globals.css";
-import AnimatedJungleBackground from "@/components/AnimatedJungleBackground";
+// ❌ Removed global AnimatedJungleBackground (we'll use it only on Home)
 import { AuthProvider } from "@/components/AuthContext";
 import { ToastProvider } from "@/components/ToastProvider";
 import Navbar from "@/components/Navbar";
-import { Suspense } from "react";  // 🟢 Add Suspense import
+import { Suspense } from "react";
 
 export const metadata = {
   title: "The Jungle Journey",
@@ -15,15 +15,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="relative min-h-screen text-white overflow-x-hidden">
-        {/* Background slideshow (behind everything) */}
-        <AnimatedJungleBackground />
-
-        {/* App content */}
+      {/* ✅ Global white background + dark text for all pages */}
+      <body className="relative min-h-screen bg-white text-neutral-900 overflow-x-hidden">
         <AuthProvider>
           <ToastProvider>
             <div className="relative z-10">
-              {/* 🟢 Wrap Navbar inside Suspense */}
               <Suspense fallback={null}>
                 <Navbar />
               </Suspense>

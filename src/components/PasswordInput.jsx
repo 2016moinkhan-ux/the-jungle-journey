@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react"; // npm i lucide-react (already ho to skip)
+import { Eye, EyeOff } from "lucide-react";
 
 export default function PasswordInput({
   value,
@@ -26,20 +26,25 @@ export default function PasswordInput({
         required={required}
         minLength={6}
         autoComplete={name === "password" ? "current-password" : "new-password"}
-        className="w-full rounded-xl px-3 py-2 pr-12
-                   bg-neutral-800/80 text-white placeholder-white/60
-                   outline-none ring-1 ring-white/10
-                   focus:bg-neutral-800 focus:ring-white/25"
+        className="
+          w-full rounded-xl px-3 py-2 pr-12
+          bg-white text-gray-900 placeholder:text-gray-400
+          border border-gray-300
+          focus:border-emerald-500 focus:ring focus:ring-emerald-200
+          outline-none
+        "
       />
 
-      {/* Eye toggle — high contrast + big tap area */}
+      {/* Eye toggle */}
       <button
         type="button"
         onClick={() => setShow((s) => !s)}
         aria-label={show ? "Hide password" : "Show password"}
-        className="absolute right-2 top-1/2 -translate-y-1/2
-                   p-2 rounded-md text-white/90
-                   hover:bg-white/10 focus:bg-white/10"
+        className="
+          absolute right-2 top-1/2 -translate-y-1/2
+          p-2 rounded-md text-gray-500
+          hover:text-gray-700 focus:text-gray-700
+        "
       >
         {show ? <EyeOff size={20} /> : <Eye size={20} />}
       </button>

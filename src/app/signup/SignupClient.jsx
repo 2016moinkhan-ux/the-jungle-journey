@@ -18,7 +18,7 @@ export default function SignupClient() {
   const [pwd, setPwd] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  // Already logged-in? → redirect
+  // If already logged in → bounce to next
   useEffect(() => {
     if (!ready) return;
     if (user) router.replace(nextParam);
@@ -26,10 +26,10 @@ export default function SignupClient() {
 
   if (!ready) {
     return (
-      <div className="min-h-[70vh] grid place-items-center">
+      <div className="min-h-[70vh] grid place-items-center bg-white">
         <div className="animate-pulse text-center">
-          <div className="w-12 h-12 rounded-full border-4 border-white/20 border-t-white mx-auto mb-4 animate-spin" />
-          <p className="text-white/70 text-sm">Loading…</p>
+          <div className="w-12 h-12 rounded-full border-4 border-gray-300 border-t-emerald-500 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600 text-sm">Loading…</p>
         </div>
       </div>
     );
@@ -52,42 +52,48 @@ export default function SignupClient() {
   };
 
   return (
-    <div className="min-h-[100dvh] grid place-items-center px-4 bg-gradient-to-br from-neutral-900 via-neutral-950 to-black">
-      <div className="w-full max-w-md rounded-2xl bg-neutral-900/70 backdrop-blur-md p-7 shadow-2xl ring-1 ring-white/10">
-        <h1 className="text-2xl font-semibold text-white">Create Account</h1>
-        <p className="text-white/60 text-sm mt-1 mb-6">
+    <div className="min-h-[100dvh] grid place-items-center px-4 bg-white text-neutral-900">
+      <div className="w-full max-w-md rounded-2xl bg-white p-7 shadow-xl ring-1 ring-neutral-200">
+        <h1 className="text-2xl font-semibold">Create Account</h1>
+        <p className="text-neutral-500 text-sm mt-1 mb-6">
           Jungle Journey me naya account banayein
         </p>
 
         {error ? (
-          <div className="mb-4 rounded-lg bg-red-500/15 text-red-200 px-3 py-2 text-sm ring-1 ring-red-500/30">
+          <div className="mb-4 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm ring-1 ring-red-200">
             {error}
           </div>
         ) : null}
 
-        {/* Google button */}
+        {/* Google button (light) */}
         <button
           type="button"
           onClick={onGoogle}
           disabled={loading}
-          className="w-full rounded-xl px-4 py-2.5 font-medium bg-white text-black hover:bg-zinc-200 transition disabled:opacity-60 flex items-center justify-center gap-2"
+          className="w-full rounded-xl px-4 py-2.5 font-medium
+                     bg-white text-neutral-800 ring-1 ring-neutral-300
+                     hover:bg-neutral-50 transition disabled:opacity-60
+                     flex items-center justify-center gap-2"
         >
           <GoogleIcon />
           Continue with Google
         </button>
 
         {/* Divider */}
-        <div className="my-5 flex items-center gap-3 text-white/40">
-          <div className="h-px flex-1 bg-white/10" />
+        <div className="my-5 flex items-center gap-3 text-neutral-400">
+          <div className="h-px flex-1 bg-neutral-200" />
           <span className="text-xs">or</span>
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-neutral-200" />
         </div>
 
         {/* Signup form */}
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs text-white/70 mb-1">Email</label>
+            <label htmlFor="email" className="block text-xs text-neutral-600 mb-1">
+              Email
+            </label>
             <input
+              id="email"
               type="email"
               autoComplete="email"
               value={email}
@@ -95,15 +101,21 @@ export default function SignupClient() {
                 if (error) clearError();
                 setEmail(e.target.value);
               }}
-              className="w-full rounded-xl bg-neutral-800/80 focus:bg-neutral-800 outline-none px-3 py-2 ring-1 ring-white/10 focus:ring-white/25 placeholder:text-white/40 text-white"
+              className="w-full rounded-xl bg-white px-3 py-2
+                         ring-1 ring-neutral-300 focus:ring-emerald-400/60
+                         outline-none placeholder:text-neutral-400
+                         text-neutral-900"
               placeholder="you@example.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs text-white/70 mb-1">Password</label>
+            <label htmlFor="password" className="block text-xs text-neutral-600 mb-1">
+              Password
+            </label>
             <PasswordInput
+              id="password"
               value={pwd}
               onChange={(e) => {
                 if (error) clearError();
@@ -111,33 +123,43 @@ export default function SignupClient() {
               }}
               placeholder="••••••••"
               name="password"
+              // 👇 Light variant (white input)
+              className="w-full"
+              variant="light"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-white/70 mb-1">Confirm Password</label>
+            <label htmlFor="confirm" className="block text-xs text-neutral-600 mb-1">
+              Confirm Password
+            </label>
             <PasswordInput
+              id="confirm"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="••••••••"
               name="confirm"
+              className="w-full"
+              variant="light"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl px-4 py-2.5 font-medium bg-white text-black hover:bg-zinc-200 transition disabled:opacity-60"
+            className="w-full rounded-xl px-4 py-2.5 font-medium
+                       bg-emerald-600 text-white hover:bg-emerald-500
+                       transition disabled:opacity-60"
           >
             {loading ? "Creating…" : "Sign Up"}
           </button>
         </form>
 
         <div className="mt-5 text-center text-sm">
-          <span className="text-white/70">Already have an account? </span>
+          <span className="text-neutral-600">Already have an account? </span>
           <Link
             href={`/login?next=${encodeURIComponent(nextParam)}`}
-            className="text-white/75 hover:text-white underline underline-offset-4"
+            className="text-emerald-700 hover:text-emerald-600 underline underline-offset-4"
             onClick={() => error && clearError()}
           >
             Login

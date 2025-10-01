@@ -4,11 +4,10 @@ import ParksClient from "./ParksClient";
 import parksModule from "@/data/parks";
 import { LBL } from "@/i18n/lang";
 
-// (Optional) If you still see warnings, keep this:
 export const dynamic = "force-dynamic"; // ensures runtime evaluation
 
 async function getLang(searchParams) {
-  const sp = await searchParams; // ✅ MUST await in Next 15
+  const sp = await searchParams;
   return sp?.lang === "hi" ? "hi" : "en";
 }
 
@@ -36,7 +35,7 @@ export async function generateMetadata({ searchParams }) {
 }
 
 export default async function ParksPage({ searchParams }) {
-  const lang = await getLang(searchParams); // ✅ await
+  const lang = await getLang(searchParams);
 
   const mpParks =
     Array.isArray(parksModule?.mpParks)
@@ -51,15 +50,12 @@ export default async function ParksPage({ searchParams }) {
     LBL?.[lang]?.subtitle ||
     (lang === "hi"
       ? "मध्य प्रदेश — राष्ट्रीय उद्यान"
-      : "Madhya Pradesh — National Parks");
+      : "Madhya Pradesh — National Parks & Safaris");
 
   return (
-    <main className="relative min-h-screen text-white">
-      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-6">
-        <div className="flex items-center justify-between">
-          <HeroHeader title="The Jungle Journey" subtitle={subtitle} />
-          {/* Removed in-page LanguageSwitch; Navbar already has it */}
-        </div>
+    <main className="relative min-h-screen bg-white text-neutral-900">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-6 md:pt-8">
+        <HeroHeader title="The Jungle Journey" subtitle={subtitle} />
       </div>
 
       <section className="relative z-10 mx-auto max-w-7xl px-4 pb-24">
