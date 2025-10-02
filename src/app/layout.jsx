@@ -1,10 +1,11 @@
+// src/app/layout.jsx
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthContext";
 import { ToastProvider } from "@/components/ToastProvider";
 import Navbar from "@/components/Navbar";
 import { Suspense } from "react";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
-import TrackPageView from "@/components/TrackPageView";
+import GoogleAnalytics from "@/components/GoogleAnalytics"; 
+import TrackPageView from "@/components/TrackPageView";   // ✅ Add this
 
 export const metadata = {
   title: "The Jungle Journey",
@@ -16,8 +17,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="relative min-h-screen bg-white text-neutral-900 overflow-x-hidden">
-        {/* ✅ Analytics setup */}
+        {/* ✅ Google Analytics script */}
         <GoogleAnalytics />
+
+        {/* ✅ Page view tracker */}
         <Suspense fallback={null}>
           <TrackPageView />
         </Suspense>

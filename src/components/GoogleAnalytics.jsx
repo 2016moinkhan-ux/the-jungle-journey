@@ -1,7 +1,7 @@
 "use client";
 import Script from "next/script";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+export const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export default function GoogleAnalytics() {
   if (!GA_ID) return null;
@@ -15,9 +15,8 @@ export default function GoogleAnalytics() {
       <Script id="ga-init" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
+          function gtag(){ dataLayer.push(arguments); }
           gtag('js', new Date());
-          // ⛔ Auto page_view disable kiya (manual wala hi chalega)
           gtag('config', '${GA_ID}', { send_page_view: false });
         `}
       </Script>
