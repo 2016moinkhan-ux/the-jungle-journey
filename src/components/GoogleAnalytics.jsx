@@ -1,22 +1,24 @@
-// src/components/GoogleAnalytics.jsx
+"use client";
 import Script from "next/script";
 
-export default function GoogleAnalytics() {
-  const id = process.env.NEXT_PUBLIC_GA_ID; // e.g. G-D9QTCKQH9D
-  if (!id) return null;
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
+export default function GoogleAnalytics() {
+  if (!GA_ID) return null;
   return (
     <>
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${id}`}
+        id="ga"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
         strategy="afterInteractive"
       />
-      <Script id="ga4-init" strategy="afterInteractive">
+      <Script id="ga-init" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${id}', { send_page_view: false }); // 👈 important change
+          // ⛔ Auto page_view disable kiya (manual wala hi chalega)
+          gtag('config', '${GA_ID}', { send_page_view: false });
         `}
       </Script>
     </>
