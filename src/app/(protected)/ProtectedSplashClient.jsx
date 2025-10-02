@@ -69,22 +69,22 @@ export default function ProtectedSplashClient() {
       };
 
   return (
-    <main className="relative min-h-[100dvh] w-full overflow-hidden bg-white text-neutral-900">
+    <main className="relative min-h-[100dvh] w-full overflow-hidden bg-white text-neutral-900 pt-6 pb-8 sm:pt-10 sm:pb-12">
       {/* TOP ROW */}
       <motion.div
-        className="pointer-events-none absolute inset-x-0 top-0 mx-auto w-full max-w-[420px] sm:max-w-[1180px] px-4 sm:px-6"
+        className="pointer-events-none absolute inset-x-0 top-0 mx-auto w-full max-w-[980px] px-4 sm:px-6"
         initial="in"
         animate={leaving ? "out" : "stay"}
         variants={{ in:{opacity:1}, stay:{opacity:1}, out:{opacity:1} }}
         aria-hidden
       >
-        {/* mobile: 2 cols, compact gap */}
-        <div className="mt-6 sm:mt-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(8px,3.5vw,18px)]">
+        {/* mobile: 4 small centered squares */}
+        <div className="mt-4 sm:mt-6 flex items-start justify-center gap-[clamp(8px,3.6vw,16px)]">
           {topTiles.map((src, i) => (
             <Tile
               key={`t-${i}`}
               src={src}
-              enter={{ rotate: ENTER_ROT_TOP[i], y: 34 }}
+              enter={{ rotate: ENTER_ROT_TOP[i], y: 28 }}
               rest={{ rotate: REST_ROT_TOP[i] }}
               exit={{ rotate: EXIT_ROT_TOP[i], y: -100 }}
               delayIn={i * STAGGER_IN}
@@ -97,18 +97,18 @@ export default function ProtectedSplashClient() {
 
       {/* BOTTOM ROW */}
       <motion.div
-        className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto w-full max-w-[420px] sm:max-w-[1180px] px-4 sm:px-6"
+        className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto w-full max-w-[980px] px-4 sm:px-6"
         initial="in"
         animate={leaving ? "out" : "stay"}
         variants={{ in:{opacity:1}, stay:{opacity:1}, out:{opacity:1} }}
         aria-hidden
       >
-        <div className="mb-6 sm:mb-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(8px,3.5vw,18px)]">
+        <div className="mb-4 sm:mb-6 flex items-end justify-center gap-[clamp(8px,3.6vw,16px)]">
           {bottomTiles.map((src, i) => (
             <Tile
               key={`b-${i}`}
               src={src}
-              enter={{ rotate: ENTER_ROT_BOT[i], y: 34 }}
+              enter={{ rotate: ENTER_ROT_BOT[i], y: 28 }}
               rest={{ rotate: REST_ROT_BOT[i] }}
               exit={{ rotate: EXIT_ROT_BOT[i], y: 100 }}
               delayIn={0.25 + i * STAGGER_IN}
@@ -157,12 +157,16 @@ export default function ProtectedSplashClient() {
   );
 }
 
-/* Tile Component */
+/* Tile Component — mobile me square chhote, sm+ me aapke portrait */
 function Tile({ src, enter, rest, exit, leaving, delayIn = 0, delayOut = 0 }) {
   return (
     <motion.div
-      className="relative aspect-[5/6] sm:aspect-[4/5] w-full overflow-hidden rounded-[20px] sm:rounded-[22px] bg-neutral-100 shadow-sm ring-1 ring-black/5
-                 scale-[0.92] sm:scale-100"  /* mobile thoda chhota */
+      className="
+        relative overflow-hidden ring-1 ring-black/5 bg-neutral-100 shadow-sm
+        rounded-[18px] sm:rounded-[22px]
+        w-[clamp(72px,22vw,100px)] aspect-square
+        sm:w-auto sm:aspect-[4/5]
+      "
       initial={{ opacity: 0, y: enter.y, rotate: enter.rotate, scale: 0.94 }}
       animate={
         leaving
