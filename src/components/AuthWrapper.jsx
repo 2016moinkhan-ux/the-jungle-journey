@@ -1,11 +1,12 @@
 // src/components/AuthWrapper.jsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "./AuthContext";
+import Spinner from "@/components/ui/Spinner"; // ✅ new
 
-// Routes that do NOT require login
+// Public routes (no auth needed)
 const PUBLIC_ROUTES = ["/login", "/signup", "/forgot-password", "/reset-password"];
 
 export default function AuthWrapper({ children }) {
@@ -13,30 +14,38 @@ export default function AuthWrapper({ children }) {
   const pathname = usePathname();
 
   const { user, ready } = useAuth();
+  const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
-    if (!ready) return; // ⏳ Wait until AuthContext finishes checking
+    if (!ready) return; // wait for Firebase to resolve
     const isPublic = PUBLIC_ROUTES.includes(pathname);
 
     if (!user && !isPublic) {
+      setRedirecting(true);
       router.replace("/login");
+    } else {
+      setRedirecting(false);
     }
   }, [user, ready, pathname, router]);
 
-  // While still loading auth state, show loader
-  if (!ready) {
+  // Show loader while checking auth or during redirect
+  if (!ready || redirecting) {
     return (
-      <div className="flex h-screen items-center justify-center text-emerald-500">
-        Loading...
+      <div
+        className="flex h-screen items-center justify-center"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <Spinner size={42} />
       </div>
     );
   }
 
-  // If not authed and trying to access private route, don’t flash children
+  // If trying to open a private page without auth, block render
   if (!user && !PUBLIC_ROUTES.includes(pathname)) {
     return null;
   }
 
-  // ✅ Otherwise show children normally
+  // ✅ Otherwise, render app normally
   return <>{children}</>;
 }

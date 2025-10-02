@@ -13,7 +13,7 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
+import { auth as authSingleton } from "@/firebase/firebase";
 
 const AuthContext = createContext(null);
 
@@ -23,16 +23,28 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // NOTE: firebase.ts exports `auth = getClientAuth()` on client; guard anyway
+  const auth = authSingleton ?? null;
+
   const clearError = () => setError("");
 
-  /* ================= Auth Methods ================= */
+  /* =============== Auth Methods =============== */
 
-  // Login
+  const ensurePersistence = async () => {
+    // guard: auth might be null very early during hydration
+    if (!auth) return;
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+    } catch (e) {
+      console.error("[auth] setPersistence failed:", e);
+    }
+  };
+
   const login = async (email, password) => {
     try {
       setLoading(true);
       clearError();
-      await setPersistence(auth, browserLocalPersistence); // ✅ persist session
+      await ensurePersistence();
       await signInWithEmailAndPassword(auth, email, password);
       return { ok: true };
     } catch (err) {
@@ -43,12 +55,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Signup
   const signup = async (email, password) => {
     try {
       setLoading(true);
       clearError();
-      await setPersistence(auth, browserLocalPersistence); // ✅ persist signup too
+      await ensurePersistence();
       await createUserWithEmailAndPassword(auth, email, password);
       return { ok: true };
     } catch (err) {
@@ -59,13 +70,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Google Login
   const googleLogin = async () => {
     try {
       setLoading(true);
       clearError();
+      await ensurePersistence();
       const provider = new GoogleAuthProvider();
-      await setPersistence(auth, browserLocalPersistence); // ✅ persist google login
       await signInWithPopup(auth, provider);
       return { ok: true };
     } catch (err) {
@@ -76,7 +86,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Forgot password
   const forgot = async (email) => {
     try {
       setLoading(true);
@@ -91,7 +100,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout (manual only)
   const logout = async () => {
     try {
       setLoading(true);
@@ -103,14 +111,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /* ================= Firebase Listener ================= */
+  /* =============== Auth State Listener =============== */
   useEffect(() => {
+    if (!auth) {
+      // very early render before firebase bootstraps
+      setReady(true);
+      return;
+    }
+
+    // ensure persistence once at mount too (in case user reloaded)
+    ensurePersistence();
+
     const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+      setUser(u || null);
       setReady(true);
     });
+
     return () => unsub();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
 
   return (
     <AuthContext.Provider
@@ -132,12 +151,12 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-/* ================= Safe Hook ================= */
+/* =============== Safe Hook =============== */
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) {
     if (typeof window !== "undefined") {
-      console.warn("⚠ useAuth used outside <AuthProvider>");
+      console.warn("⚠ useAuth used outside <AuthProvider> — returning fallback.");
     }
     return {
       user: null,

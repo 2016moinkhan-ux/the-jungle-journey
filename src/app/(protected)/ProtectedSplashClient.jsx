@@ -5,14 +5,15 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/components/AuthContext";
+import Spinner from "@/components/ui/Spinner";
 
-/* Timing */
-const STAGGER_IN = 0.09;
-const STAGGER_OUT = 0.06;
-const EXIT_START_MS = 4300;
-const REDIRECT_MS = 5000;
+/* Timing (⏩ ~1s more faster than previous) */
+const STAGGER_IN = 0.04;    // was 0.06
+const STAGGER_OUT = 0.025;  // was 0.04
+const EXIT_START_MS = 2300; // was 3300
+const REDIRECT_MS = 3000;   // was 4000
 
-/* Rotation angles */
+/* Rotation angles (unchanged) */
 const ENTER_ROT_TOP  = [-52, 52, -48, 48];
 const ENTER_ROT_BOT  = [52, -52, 48, -48];
 const REST_ROT_TOP   = [-10, -3, 7, 12];
@@ -26,13 +27,25 @@ export default function ProtectedSplashClient() {
   const { user, ready } = useAuth();
   const lang = sp?.get("lang") === "hi" ? "hi" : "en";
 
+  // Loader only while auth resolving
   if (!ready) {
     return (
-      <main className="grid min-h-[100dvh] place-items-center bg-white text-neutral-700">
-        Loading…
+      <main className="grid min-h-[100dvh] place-items-center bg-white text-neutral-800">
+        <div className="flex flex-col items-center gap-3" aria-live="polite" aria-busy="true">
+          <Spinner size={54} color="#16a34a" />
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", repeat: Infinity, repeatType: "reverse" }}
+            className="text-sm sm:text-base text-emerald-600 font-medium"
+          >
+            {lang === "hi" ? "जंगल सफर शुरू हो रहा है…" : "Exploring the Jungle…"}
+          </motion.p>
+        </div>
       </main>
     );
   }
+
   if (!user) return null;
 
   const [leaving, setLeaving] = useState(false);
@@ -78,7 +91,6 @@ export default function ProtectedSplashClient() {
         variants={{ in:{opacity:1}, stay:{opacity:1}, out:{opacity:1} }}
         aria-hidden
       >
-        {/* mobile: 4 small centered squares */}
         <div className="mt-4 sm:mt-6 flex items-start justify-center gap-[clamp(8px,3.6vw,16px)]">
           {topTiles.map((src, i) => (
             <Tile
@@ -123,10 +135,10 @@ export default function ProtectedSplashClient() {
       <div className="absolute inset-0 grid place-items-center">
         <div className="text-center max-w-[740px] px-6">
           <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.96 }}
+            initial={{ opacity: 0, y: 20, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="inline-flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-2 shadow-sm"
+            transition={{ duration: 0.45, ease: "easeOut" }}  // faster
+            className="inline-flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-5 py-2 shadow-md"
           >
             <span className="text-xl">🌿</span>
             <span className="text-lg sm:text-xl font-semibold tracking-tight">
@@ -135,18 +147,18 @@ export default function ProtectedSplashClient() {
           </motion.div>
 
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut", delay: 0.18 }}
-            className="mt-3 text-base sm:text-lg text-neutral-700"
+            transition={{ duration: 0.35, ease: "easeOut", delay: 0.12 }} // faster
+            className="mt-3 text-base sm:text-lg text-neutral-700 font-medium"
           >
             {T.line1}
           </motion.p>
 
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: "easeOut", delay: 0.36 }}
+            transition={{ duration: 0.35, ease: "easeOut", delay: 0.24 }} // faster
             className="mt-1 text-sm sm:text-base text-neutral-600"
           >
             {T.line2}
@@ -157,7 +169,7 @@ export default function ProtectedSplashClient() {
   );
 }
 
-/* Tile Component — mobile me square chhote, sm+ me aapke portrait */
+/* Tile Component — snappier transitions */
 function Tile({ src, enter, rest, exit, leaving, delayIn = 0, delayOut = 0 }) {
   return (
     <motion.div
@@ -175,7 +187,7 @@ function Tile({ src, enter, rest, exit, leaving, delayIn = 0, delayOut = 0 }) {
               y: exit.y,
               rotate: exit.rotate,
               scale: 0.92,
-              transition: { duration: 0.5, ease: "easeInOut", delay: delayOut },
+              transition: { duration: 0.30, ease: "easeInOut", delay: delayOut }, // faster exit
             }
           : {
               opacity: 1,
@@ -184,9 +196,9 @@ function Tile({ src, enter, rest, exit, leaving, delayIn = 0, delayOut = 0 }) {
               scale: 1,
               transition: {
                 type: "spring",
-                stiffness: 240,
-                damping: 18,
-                mass: 0.55,
+                stiffness: 300, // snappier
+                damping: 15,
+                mass: 0.5,
                 delay: delayIn,
               },
             }

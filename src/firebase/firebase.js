@@ -9,7 +9,7 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 
-// Read from NEXT_PUBLIC_* envs (must exist on client & Vercel)
+// ✅ Env configs (client & Vercel ke liye public vars)
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -19,7 +19,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Single app instance
+// ✅ Ek hi instance rakho
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 // ---- Lazy singletons (client only) ----
@@ -30,9 +30,10 @@ let _googleProvider = null;
  * Safe getter (prefer this inside client components)
  */
 export function getClientAuth() {
-  if (typeof window === "undefined") return null; // never construct on server
+  if (typeof window === "undefined") return null; // ❌ server par mat banao
   if (!_auth) {
     _auth = getAuth(app);
+    // ✅ force browserLocalPersistence on first init
     setPersistence(_auth, browserLocalPersistence).catch((e) => {
       console.error("[firebase] setPersistence error:", e);
     });
@@ -41,12 +42,10 @@ export function getClientAuth() {
 }
 
 /**
- * Backward-compat: some files import { auth } directly.
- * On server it stays null (so SSR won't instantiate auth).
- * On client it lazily resolves to the same singleton.
+ * Direct export for backward-compat
+ * On server => null, on client => singleton
  */
-export const auth =
-  typeof window === "undefined" ? null : getClientAuth();
+export const auth = typeof window === "undefined" ? null : getClientAuth();
 
 /**
  * Google provider (client only)
