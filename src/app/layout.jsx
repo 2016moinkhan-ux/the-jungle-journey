@@ -1,10 +1,11 @@
 // src/app/layout.jsx
 import "./globals.css";
-// ❌ Removed global AnimatedJungleBackground (we'll use it only on Home)
 import { AuthProvider } from "@/components/AuthContext";
 import { ToastProvider } from "@/components/ToastProvider";
 import Navbar from "@/components/Navbar";
 import { Suspense } from "react";
+import GoogleAnalytics from "@/components/GoogleAnalytics"; 
+import TrackPageView from "@/components/TrackPageView";   // ✅ Add this
 
 export const metadata = {
   title: "The Jungle Journey",
@@ -15,8 +16,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* ✅ Global white background + dark text for all pages */}
       <body className="relative min-h-screen bg-white text-neutral-900 overflow-x-hidden">
+        {/* ✅ Google Analytics script */}
+        <GoogleAnalytics />
+
+        {/* ✅ Page view tracker */}
+        <Suspense fallback={null}>
+          <TrackPageView />
+        </Suspense>
+
         <AuthProvider>
           <ToastProvider>
             <div className="relative z-10">
