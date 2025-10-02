@@ -1,3 +1,4 @@
+// src/app/(protected)/ProtectedSplashClient.jsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -25,7 +26,6 @@ export default function ProtectedSplashClient() {
   const { user, ready } = useAuth();
   const lang = sp?.get("lang") === "hi" ? "hi" : "en";
 
-  // 🔸 small UX: show a tiny loader until auth is ready
   if (!ready) {
     return (
       <main className="grid min-h-[100dvh] place-items-center bg-white text-neutral-700">
@@ -72,14 +72,14 @@ export default function ProtectedSplashClient() {
     <main className="relative min-h-[100dvh] w-full overflow-hidden bg-white text-neutral-900">
       {/* TOP ROW */}
       <motion.div
-        className="pointer-events-none absolute inset-x-0 top-0 mx-auto w-full max-w-[1180px] px-5 sm:px-6"
+        className="pointer-events-none absolute inset-x-0 top-0 mx-auto w-full max-w-[420px] sm:max-w-[1180px] px-4 sm:px-6"
         initial="in"
         animate={leaving ? "out" : "stay"}
         variants={{ in:{opacity:1}, stay:{opacity:1}, out:{opacity:1} }}
         aria-hidden
       >
-        {/* ⬇️ CHANGED: 2 cols on mobile + same gap as bottom */}
-        <div className="mt-7 sm:mt-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(10px,4vw,18px)]">
+        {/* mobile: 2 cols, compact gap */}
+        <div className="mt-6 sm:mt-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(8px,3.5vw,18px)]">
           {topTiles.map((src, i) => (
             <Tile
               key={`t-${i}`}
@@ -97,13 +97,13 @@ export default function ProtectedSplashClient() {
 
       {/* BOTTOM ROW */}
       <motion.div
-        className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto w-full max-w-[1180px] px-5 sm:px-6"
+        className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto w-full max-w-[420px] sm:max-w-[1180px] px-4 sm:px-6"
         initial="in"
         animate={leaving ? "out" : "stay"}
         variants={{ in:{opacity:1}, stay:{opacity:1}, out:{opacity:1} }}
         aria-hidden
       >
-        <div className="mb-7 sm:mb-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(10px,4vw,18px)]">
+        <div className="mb-6 sm:mb-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(8px,3.5vw,18px)]">
           {bottomTiles.map((src, i) => (
             <Tile
               key={`b-${i}`}
@@ -161,7 +161,8 @@ export default function ProtectedSplashClient() {
 function Tile({ src, enter, rest, exit, leaving, delayIn = 0, delayOut = 0 }) {
   return (
     <motion.div
-      className="relative aspect-[4/5] w-full overflow-hidden rounded-[22px] bg-neutral-100 shadow-sm ring-1 ring-black/5"
+      className="relative aspect-[5/6] sm:aspect-[4/5] w-full overflow-hidden rounded-[20px] sm:rounded-[22px] bg-neutral-100 shadow-sm ring-1 ring-black/5
+                 scale-[0.92] sm:scale-100"  /* mobile thoda chhota */
       initial={{ opacity: 0, y: enter.y, rotate: enter.rotate, scale: 0.94 }}
       animate={
         leaving
@@ -186,7 +187,7 @@ function Tile({ src, enter, rest, exit, leaving, delayIn = 0, delayOut = 0 }) {
               },
             }
       }
-      whileTap={{ scale: 0.96 }}  // ⬅️ press feedback
+      whileTap={{ scale: 0.96 }}
     >
       <img
         src={src}
