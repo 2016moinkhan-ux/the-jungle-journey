@@ -25,7 +25,15 @@ export default function ProtectedSplashClient() {
   const { user, ready } = useAuth();
   const lang = sp?.get("lang") === "hi" ? "hi" : "en";
 
-  if (!ready || !user) return null;
+  // 🔸 small UX: show a tiny loader until auth is ready
+  if (!ready) {
+    return (
+      <main className="grid min-h-[100dvh] place-items-center bg-white text-neutral-700">
+        Loading…
+      </main>
+    );
+  }
+  if (!user) return null;
 
   const [leaving, setLeaving] = useState(false);
 
@@ -70,7 +78,8 @@ export default function ProtectedSplashClient() {
         variants={{ in:{opacity:1}, stay:{opacity:1}, out:{opacity:1} }}
         aria-hidden
       >
-        <div className="mt-7 sm:mt-10 grid grid-cols-4 gap-[clamp(14px,2vw,18px)]">
+        {/* ⬇️ CHANGED: 2 cols on mobile + same gap as bottom */}
+        <div className="mt-7 sm:mt-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(10px,4vw,18px)]">
           {topTiles.map((src, i) => (
             <Tile
               key={`t-${i}`}
@@ -94,7 +103,7 @@ export default function ProtectedSplashClient() {
         variants={{ in:{opacity:1}, stay:{opacity:1}, out:{opacity:1} }}
         aria-hidden
       >
-        <div className="mb-7 sm:mb-10 grid grid-cols-4 gap-[clamp(14px,2vw,18px)]">
+        <div className="mb-7 sm:mb-10 grid grid-cols-2 sm:grid-cols-4 gap-[clamp(10px,4vw,18px)]">
           {bottomTiles.map((src, i) => (
             <Tile
               key={`b-${i}`}
@@ -177,6 +186,7 @@ function Tile({ src, enter, rest, exit, leaving, delayIn = 0, delayOut = 0 }) {
               },
             }
       }
+      whileTap={{ scale: 0.96 }}  // ⬅️ press feedback
     >
       <img
         src={src}

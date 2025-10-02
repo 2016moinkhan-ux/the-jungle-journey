@@ -1,56 +1,43 @@
 // src/data/parkLinks.js
-// Per-park direct safari site links (non-official portals)
-// Keep ids exactly same as in mpParks[].id
+// Direct safari booking (non-official portals).
+// Keys must match mpParks[].id EXACTLY.
 
 const parkLinks = {
   kanha: {
-    en: "https://www.kanhanationalparkonline.in",
-    hi: "https://www.kanhanationalparkonline.in",
+    en: "https://www.kanhanationalparkonline.in/online-kanha-safari-booking.html",
+    hi: "https://www.kanhanationalparkonline.in/online-kanha-safari-booking.html",
   },
   bandhavgarh: {
-    en: "https://www.bandhavgarhnationalpark.in",
-    hi: "https://www.bandhavgarhnationalpark.in",
+    en: "https://www.bandhavgarhnationalpark.in/online-bandhavgarh-safari-booking.html",
+    hi: "https://www.bandhavgarhnationalpark.in/online-bandhavgarh-safari-booking.html",
   },
   pench: {
-    en: "https://www.penchnationalparkonline.in",
-    hi: "https://www.penchnationalparkonline.in",
+    en: "https://www.penchnationalparkonline.in/online-pench-safari-booking.html",
+    hi: "https://www.penchnationalparkonline.in/online-pench-safari-booking.html",
   },
   satpura: {
-    en: "https://www.satpuranationalparkonline.in",
-    hi: "https://www.satpuranationalparkonline.in",
+    en: "https://www.satpuranationalparkonline.in/online-satpura-safari-booking.php",
+    hi: "https://www.satpuranationalparkonline.in/online-satpura-safari-booking.php",
   },
   panna: {
-    en: "https://www.pannanationalparkonline.in",
-    hi: "https://www.pannanationalparkonline.in",
+    en: "https://www.pannanationalparkonline.in/panna-online-safari-booking.html",
+    hi: "https://www.pannanationalparkonline.in/panna-online-safari-booking.html",
   },
-  sanjayDubri: {
+
+  // Sanjay–Dubri: abhi official aggregator par hi le ja rahe hain
+  "sanjay-dubri": {
     en: "https://mpforest.co.in",
     hi: "https://mpforest.co.in",
   },
-  kuno: {
-    en: "https://www.kunonationalpark.org",
-    hi: "https://www.kunonationalpark.org",
+
+  // Van Vihar: MPOnline gate (direct)
+  "van-vihar": {
+    en: "https://forest.mponline.gov.in/Tier2Forest/SelectTripCategoryEntryNew.aspx?ParkID=VVNP&T=Tier2",
+    hi: "https://forest.mponline.gov.in/Tier2Forest/SelectTripCategoryEntryNew.aspx?ParkID=VVNP&T=Tier2",
   },
-  vanVihar: {
-    en: "https://vanviharnationalpark.org",
-    hi: "https://vanviharnationalpark.org",
-  },
-  gandhiSagar: {
-    en: "https://wildtrails.in/india/madhya-pradesh/gandhi-sagar-wildlife-sanctuary/",
-    hi: "https://wildtrails.in/india/madhya-pradesh/gandhi-sagar-wildlife-sanctuary/",
-  },
-  nauradehi: {
-    en: "https://nauradehiwls.in",
-    hi: "https://nauradehiwls.in",
-  },
-  madhav: {
-    en: "https://madhavnationalpark.org",
-    hi: "https://madhavnationalpark.org",
-  },
-  dinosaur: {
-    en: "https://dhar.nic.in/en/tourist-place/dinosaur-fossil-park-bagh/",
-    hi: "https://dhar.nic.in/hi/tourist-place/dinosaur-fossil-park-bagh/",
-  },
+
+  // ❌ Don’t add keys for: kuno, gandhi-sagar, nauradehi, madhav, dinosaur
+  // In par Safari Booking button hide rahega, Official Permit dikhayenge.
 };
 
 export default parkLinks;

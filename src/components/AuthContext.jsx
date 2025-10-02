@@ -25,12 +25,14 @@ export const AuthProvider = ({ children }) => {
 
   const clearError = () => setError("");
 
-  // --- Auth methods ---
+  /* ================= Auth Methods ================= */
+
+  // Login
   const login = async (email, password) => {
     try {
       setLoading(true);
       clearError();
-      await setPersistence(auth, browserLocalPersistence); // ✅ ensure persistent login
+      await setPersistence(auth, browserLocalPersistence); // ✅ persist session
       await signInWithEmailAndPassword(auth, email, password);
       return { ok: true };
     } catch (err) {
@@ -41,11 +43,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Signup
   const signup = async (email, password) => {
     try {
       setLoading(true);
       clearError();
-      await setPersistence(auth, browserLocalPersistence); // ✅ new accounts also persist
+      await setPersistence(auth, browserLocalPersistence); // ✅ persist signup too
       await createUserWithEmailAndPassword(auth, email, password);
       return { ok: true };
     } catch (err) {
@@ -56,12 +59,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Google Login
   const googleLogin = async () => {
     try {
       setLoading(true);
       clearError();
       const provider = new GoogleAuthProvider();
-      await setPersistence(auth, browserLocalPersistence); // ✅ google login persists too
+      await setPersistence(auth, browserLocalPersistence); // ✅ persist google login
       await signInWithPopup(auth, provider);
       return { ok: true };
     } catch (err) {
@@ -72,6 +76,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Forgot password
   const forgot = async (email) => {
     try {
       setLoading(true);
@@ -86,6 +91,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Logout (manual only)
   const logout = async () => {
     try {
       setLoading(true);
@@ -97,7 +103,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // --- Listen to Firebase auth user ---
+  /* ================= Firebase Listener ================= */
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -126,12 +132,12 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Safe hook
+/* ================= Safe Hook ================= */
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) {
     if (typeof window !== "undefined") {
-      console.warn("useAuth used before <AuthProvider> — returning fallback.");
+      console.warn("⚠ useAuth used outside <AuthProvider>");
     }
     return {
       user: null,

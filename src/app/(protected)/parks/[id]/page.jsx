@@ -4,8 +4,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import mpParks from "@/data/parks";
+import parkLinks from "@/data/parkLinks";   // ✅ direct safari booking links (optional)
+import mapLinks from "@/data/mapLinks";     // ✅ gate directions (optional)
 import { LBL } from "@/i18n/lang";
-import TypeBadges from "@/components/TypeBadge"; // client component is ok in server file
+import TypeBadges from "@/components/TypeBadge";
 
 /* ---------------- Helpers (lang-aware) ---------------- */
 const t = (val, lang) =>
@@ -22,7 +24,6 @@ const list = (val, lang) => {
 const siteURL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export async function generateMetadata({ params, searchParams }) {
-  // 🔧 Next.js v15: await dynamic APIs
   const { id } = await params;
   const sp = await searchParams;
   const lang = sp?.lang === "hi" ? "hi" : "en";
@@ -63,9 +64,7 @@ export async function generateMetadata({ params, searchParams }) {
   const summary = t(park.description, lang);
 
   const title =
-    lang === "hi"
-      ? `${name} | द जंगल जर्नी`
-      : `${name} | The Jungle Journey`;
+    lang === "hi" ? `${name} | द जंगल जर्नी` : `${name} | The Jungle Journey`;
   const description =
     (summary && summary.slice(0, 150)) ||
     (lang === "hi"
@@ -85,14 +84,7 @@ export async function generateMetadata({ params, searchParams }) {
       description,
       url: `${siteURL}/parks/${park.id}?lang=${lang}`,
       type: "article",
-      images: [
-        {
-          url: ogImageAbs,
-          width: 1200,
-          height: 630,
-          alt: name,
-        },
-      ],
+      images: [{ url: ogImageAbs, width: 1200, height: 630, alt: name }],
     },
     twitter: {
       card: "summary_large_image",
@@ -108,7 +100,6 @@ export async function generateMetadata({ params, searchParams }) {
 
 /* ---------------- Page UI (Server Component) ---------------- */
 export default async function ParkDetailPage({ params, searchParams }) {
-  // 🔧 Next.js v15: await dynamic APIs
   const { id } = await params;
   const sp = await searchParams;
   const lang = sp?.lang === "hi" ? "hi" : "en";
@@ -128,13 +119,18 @@ export default async function ParkDetailPage({ params, searchParams }) {
   const zones = list(park.zones, lang);
   const gates = list(park.entryGates, lang);
   const wildlife = list(park.wildlife, lang);
-
-  const official = park.officialBooking;
   const website = park.website;
-  const mapLink = park.mapLink;
+
+  // ✅ Button data & fallbacks
+  const directBooking = parkLinks?.[id]?.[lang] || parkLinks?.[id]?.en || "";
+  const officialPermit = !directBooking ? (park.officialBooking || "") : "";
+  const mapHref =
+    mapLinks?.[id]?.[lang] ||
+    mapLinks?.[id]?.en ||
+    park.mapLink ||
+    "";
 
   return (
-    // ✅ Light theme: white bg + dark text
     <main className="min-h-screen bg-white text-neutral-900">
       {/* Top bar */}
       <div className="mx-auto max-w-6xl px-4 py-5 flex items-center justify-between">
@@ -152,31 +148,17 @@ export default async function ParkDetailPage({ params, searchParams }) {
         <div className="overflow-hidden rounded-2xl bg-white border border-neutral-200 shadow-sm">
           {/* Image + overlay */}
           <div className="relative aspect-[16/9] w-full overflow-hidden bg-neutral-100">
-            <img
-              src={park.image}
-              alt={name}
-              className="h-full w-full object-cover"
-            />
-
-            {/* gradient veil (keep for readability on bright photos) */}
+            <img src={park.image} alt={name} className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
-
-            {/* Overlay */}
             <div className="absolute left-5 right-5 bottom-5 md:left-7 md:right-7 md:bottom-6">
               <div className="drop-shadow-[0_1px_8px_rgba(0,0,0,0.45)]">
                 <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
                   {name}
                 </h1>
                 {district && (
-                  <p className="mt-1 text-sm md:text-base text-white/90">
-                    {district}
-                  </p>
+                  <p className="mt-1 text-sm md:text-base text-white/90">{district}</p>
                 )}
-
-                {/* 🟢 Designation badges */}
                 <TypeBadges park={park} lang={lang} className="mt-2" />
-
-                {/* Quick chips */}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {bestTime && (
                     <span className="rounded-md bg-white/90 text-neutral-900 px-2 py-1 text-xs font-medium">
@@ -195,16 +177,28 @@ export default async function ParkDetailPage({ params, searchParams }) {
 
           {/* Buttons row */}
           <div className="flex flex-wrap items-center gap-2 p-5 md:items-center md:justify-end">
-            {official && (
+            {directBooking ? (
               <a
-                href={official}
+                href={directBooking}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
               >
-                {lang === "hi" ? "Official Permit" : "Official Permit"}
+                {lang === "hi" ? "सफारी बुकिंग" : "Safari Booking"}
               </a>
+            ) : (
+              officialPermit && (
+                <a
+                  href={officialPermit}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+                >
+                  {lang === "hi" ? "ऑफिशियल परमिट" : "Official Permit"}
+                </a>
+              )
             )}
+
             {website && (
               <a
                 href={website}
@@ -212,17 +206,18 @@ export default async function ParkDetailPage({ params, searchParams }) {
                 rel="noopener noreferrer"
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500"
               >
-                {lang === "hi" ? "Park Website" : "Park Website"}
+                {lang === "hi" ? "पार्क वेबसाइट" : "Park Website"}
               </a>
             )}
-            {mapLink && (
+
+            {mapHref && (
               <a
-                href={mapLink}
+                href={mapHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-md bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-500"
               >
-                {lang === "hi" ? "Google Map" : "Google Map"}
+                {lang === "hi" ? "Google Map (Gate)" : "Google Map (Gate)"}
               </a>
             )}
           </div>
@@ -263,14 +258,10 @@ export default async function ParkDetailPage({ params, searchParams }) {
                   </span>{" "}
                   <span className="whitespace-pre-line">
                     {timingsSummer &&
-                      (lang === "hi"
-                        ? `गर्मी: ${timingsSummer}`
-                        : `Summer: ${timingsSummer}`)}
+                      (lang === "hi" ? `गर्मी: ${timingsSummer}` : `Summer: ${timingsSummer}`)}
                     {timingsSummer && timingsWinter ? "\n" : ""}
                     {timingsWinter &&
-                      (lang === "hi"
-                        ? `सर्दी: ${timingsWinter}`
-                        : `Winter: ${timingsWinter}`)}
+                      (lang === "hi" ? `सर्दी: ${timingsWinter}` : `Winter: ${timingsWinter}`)}
                   </span>
                 </li>
               )}

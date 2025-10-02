@@ -35,7 +35,7 @@ export const mpParks = [
       en: "Rail: Gondia/Jabalpur. Air: Jabalpur (~160 km), Nagpur (~260 km).",
       hi: "रेल: गोंदिया/जबलपुर. वायु: जबलपुर (~160 किमी), नागपुर (~260 किमी).",
     },
-    officialBooking: "https://forest.mponline.gov.in/",
+    safariBooking: "https://www.kanhanationalparkonline.in/online-kanha-safari-booking.html",
     mapLink: "https://www.google.com/maps/search/?api=1&query=Kanha+National+Park",
     website: "https://www.kanhanationalparkonline.in",
 

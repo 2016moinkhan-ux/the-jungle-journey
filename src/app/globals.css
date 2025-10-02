@@ -1,129 +1,225 @@
 @import "tailwindcss";
 
+/* ========== Base Reset ========== */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body { background: #f7f7f8; color: #111827; }
 
-/* ===== Jungle theme base ===== */
-:root {
-  --jj-bg: radial-gradient(1200px 600px at 10% -10%, rgba(34,197,94,0.08), transparent 60%),
-           radial-gradient(900px 500px at 110% 0%, rgba(16,185,129,0.08), transparent 55%),
-           linear-gradient(#f6f8f5, #f6f8f5);
+/* ========== Jungle theme base ========== */
+:root{
+  --jj-bg:
+    radial-gradient(1200px 600px at 10% -10%, rgba(34,197,94,.08), transparent 60%),
+    radial-gradient(900px 500px at 110% 0%, rgba(16,185,129,.08), transparent 55%),
+    linear-gradient(#f6f8f5,#f6f8f5);
   --jj-chip: #eef7f0;
   --jj-chip-text: #0f5132;
   --jj-ink: #0b1f17;
   --jj-emerald: #10b981;
   --jj-emerald-dark: #059669;
 }
+html, body{ background: var(--jj-bg); }
 
-html, body {
-  background: var(--jj-bg);
+h1, h2{ text-shadow: 0 1px 0 rgba(255,255,255,.8); }
+
+/* ========== Cards ========== */
+.card{ border: 1px solid #e5e7eb; border-radius: 16px; background: #fff; }
+.rounded-2xl{ border-radius: 18px; }
+.shadow, .shadow-sm, .shadow-md{
+  box-shadow:
+    0 10px 30px rgba(16,185,129,.06),
+    0 2px 6px rgba(0,0,0,.06);
 }
 
-h1, h2 {
-  text-shadow: 0 1px 0 rgba(255,255,255,0.8);
-}
-
-/* Cards */
-.card { border: 1px solid #e5e7eb; border-radius: 16px; background: #fff; }
-.rounded-2xl { border-radius: 18px; }
-.shadow, .shadow-sm, .shadow-md {
-  box-shadow: 0 10px 30px rgba(16,185,129,0.06),
-              0 2px 6px rgba(0,0,0,0.06);
-}
-
-/* Card-surface reusable */
-.card-surface {
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  border-radius: 0.75rem;
+/* Glassy surface helper */
+.card-surface{
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.05);
+  border-radius: .75rem;
   backdrop-filter: blur(6px);
 }
 
-/* Pills/chips */
+/* ========== Chips / Pills ========== */
 .bg-gray-100.text-sm,
-span.rounded-full.bg-gray-100 {
+span.rounded-full.bg-gray-100{
   background: var(--jj-chip) !important;
   color: var(--jj-chip-text) !important;
-  border: 1px solid rgba(16,185,129,0.18);
+  border: 1px solid rgba(16,185,129,.18);
 }
-.chip {
+.chip{
   @apply inline-block rounded-full px-3 py-1 text-xs;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #dcfce7;
+  background: rgba(16,185,129,.15);
+  border: 1px solid rgba(16,185,129,.3);
+  color: #0f5132;
 }
-.chip-glow {
-  box-shadow: 0 0 6px rgba(16,185,129,0.4);
+.chip-glow{ box-shadow: 0 0 6px rgba(16,185,129,.4); }
+
+/* ========== Strong Touch / Press Feedback ========== */
+button,
+a,
+a[role="button"],
+a.rounded-md{
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  will-change: transform;
+  cursor: pointer;
+}
+@media (hover:hover){
+  button:hover,
+  a:hover,
+  a[role="button"]:hover,
+  a.rounded-md:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  }
+}
+button:active,
+a:active,
+a[role="button"]:active,
+a.rounded-md:active{
+  transform: translateY(1px) scale(.97);
+  filter: brightness(.96);
+  box-shadow: inset 0 3px 7px rgba(0,0,0,.28);
+}
+button:focus-visible,
+a:focus-visible,
+a[role="button"]:focus-visible,
+a.rounded-md:focus-visible{
+  outline: 2px solid var(--jj-emerald);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce){
+  button,
+  a,
+  a[role="button"],
+  a.rounded-md{ transition: filter .15s ease, box-shadow .15s ease; }
+  button:hover,
+  a:hover,
+  a[role="button"]:hover,
+  a.rounded-md:hover{ transform: none; }
+  button:active,
+  a:active,
+  a[role="button"]:active,
+  a.rounded-md:active{ transform: none; }
 }
 
-/* Buttons */
-.bg-emerald-600 { background-color: var(--jj-emerald) !important; }
-.bg-emerald-600:hover { background-color: var(--jj-emerald-dark) !important; }
+/* ========== Polished Button Themes ========== */
 
-/* Park image hover */
-img.object-cover {
-  transition: transform .5s ease, filter .35s ease;
+/* Emerald (Safari Booking) */
+.bg-emerald-600 {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #10b981, #0ea371);
+  border: 1px solid rgba(16,185,129,0.45) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px rgba(16,185,129,0.22);
 }
-img.object-cover:hover {
-  filter: saturate(1.05) contrast(1.02);
+.bg-emerald-600:hover {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #12c493, #0f9869);
+  box-shadow: 0 10px 24px rgba(16,185,129,0.28);
+}
+.bg-emerald-600:active {
+  background-image: linear-gradient(180deg, #0fa976, #0e8e63);
+  box-shadow: inset 0 3px 7px rgba(0,0,0,0.28);
 }
 
-/* ===== Fireflies ===== */
-.fireflies {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
+/* Indigo (Park Website) */
+.bg-indigo-600 {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #4f46e5, #4338ca);
+  border: 1px solid rgba(79,70,229,0.50) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px rgba(79,70,229,0.20);
 }
-.firefly {
-  position: absolute;
-  width: 4px; height: 4px;
-  border-radius: 999px;
-  background: #ffd166;
-  box-shadow: 0 0 8px 2px rgba(255, 209, 102, 0.9),
-              0 0 14px 6px rgba(255, 209, 102, 0.35);
+.bg-indigo-600:hover {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #5851ff, #463bdb);
+  box-shadow: 0 10px 24px rgba(79,70,229,0.26);
+}
+.bg-indigo-600:active {
+  background-image: linear-gradient(180deg, #483fda, #3d33bf);
+}
+
+/* Amber (Google Map) */
+.bg-amber-600 {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #d97706, #b45309);
+  border: 1px solid rgba(217,119,6,0.55) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px rgba(217,119,6,0.20);
+}
+.bg-amber-600:hover {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #e2850b, #bf5d0a);
+  box-shadow: 0 10px 24px rgba(217,119,6,0.26);
+}
+.bg-amber-600:active {
+  background-image: linear-gradient(180deg, #c8700b, #9f4f08);
+}
+
+/* Dark / Neutral (View details) */
+.bg-neutral-900 {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 35%),
+    linear-gradient(180deg, #111827, #0b1220);
+  border: 1px solid rgba(17,24,39,0.55) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px rgba(17,24,39,0.22);
+}
+.bg-neutral-900:hover {
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 35%),
+    linear-gradient(180deg, #151c2b, #0c1322);
+  box-shadow: 0 10px 24px rgba(17,24,39,0.30);
+}
+.bg-neutral-900:active {
+  background-image: linear-gradient(180deg, #0f1623, #0a101b);
+}
+
+/* ========== Park image hover ========== */
+img.object-cover{ transition: transform .5s ease, filter .35s ease; }
+img.object-cover:hover{ filter: saturate(1.05) contrast(1.02); }
+
+/* ========== Fireflies ========== */
+.fireflies{ position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+.firefly{
+  position: absolute; width: 4px; height: 4px; border-radius: 999px; background: #ffd166;
+  box-shadow: 0 0 8px 2px rgba(255,209,102,.9), 0 0 14px 6px rgba(255,209,102,.35);
   opacity: 0;
-  animation: ff-blink 3.2s linear infinite,
-             ff-float 16s ease-in-out infinite;
+  animation: ff-blink 3.2s linear infinite, ff-float 16s ease-in-out infinite;
 }
-/* nth-child custom positions (same as before) */
-.firefly:nth-child(1)  { left: 8%;  top: 68%; animation-delay: .0s, 0s; }
-.firefly:nth-child(2)  { left: 18%; top: 22%; animation-delay: .6s, -2s; }
-.firefly:nth-child(3)  { left: 28%; top: 78%; animation-delay: 1.2s, -4s; }
-.firefly:nth-child(4)  { left: 38%; top: 18%; animation-delay: 1.8s, -6s; }
-/* ... बाकी वैसे ही चलते रहेंगे ... */
+.firefly:nth-child(1){ left: 8%; top: 68%; animation-delay: .0s, 0s; }
+.firefly:nth-child(2){ left: 18%; top: 22%; animation-delay: .6s, -2s; }
+.firefly:nth-child(3){ left: 28%; top: 78%; animation-delay: 1.2s, -4s; }
+.firefly:nth-child(4){ left: 38%; top: 18%; animation-delay: 1.8s, -6s; }
 
-@keyframes ff-blink {
-  0%, 100% { opacity: 0; transform: scale(0.6); }
-  10%      { opacity: .95; transform: scale(1); }
-  20%      { opacity: .2; }
-  30%      { opacity: .9; }
-  50%      { opacity: .35; }
-  70%      { opacity: .85; }
-  85%      { opacity: .15; }
+@keyframes ff-blink{
+  0%,100%{ opacity: 0; transform: scale(.6); }
+  10%{ opacity: .95; transform: scale(1); }
+  20%{ opacity: .2; }
+  30%{ opacity: .9; }
+  50%{ opacity: .35; }
+  70%{ opacity: .85; }
+  85%{ opacity: .15; }
 }
-@keyframes ff-float {
-  0%   { transform: translate(0, 0); }
-  25%  { transform: translate(12px, -22px); }
-  50%  { transform: translate(-8px, -8px); }
-  75%  { transform: translate(16px, 18px); }
-  100% { transform: translate(0, 0); }
+@keyframes ff-float{
+  0%{ transform: translate(0,0); }
+  25%{ transform: translate(12px,-22px); }
+  50%{ transform: translate(-8px,-8px); }
+  75%{ transform: translate(16px,18px); }
+  100%{ transform: translate(0,0); }
 }
 
-/* ===== Animations ===== */
-.fade-slide-in {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeSlideUp 1s ease-out forwards;
-}
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ========== Simple fade/slide ========== */
+.fade-slide-in{ opacity: 0; transform: translateY(20px); animation: fadeSlideUp 1s ease-out forwards; }
+@keyframes fadeSlideUp{
+  from{ opacity: 0; transform: translateY(20px); }
+  to{ opacity: 1; transform: translateY(0); }
 }
 
 /* Soft text shadow */
-.text-shadow-soft {
-  text-shadow: 0 2px 6px rgba(0,0,0,0.55);
-}
+.text-shadow-soft{ text-shadow: 0 2px 6px rgba(0,0,0,.55); }
