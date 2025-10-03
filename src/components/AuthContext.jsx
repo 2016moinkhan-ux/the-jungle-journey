@@ -1,9 +1,9 @@
 // src/components/AuthContext.jsx
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
-  onAuthStateChanged,
+  onIdTokenChanged,              // ⬅️ changed
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -28,17 +28,19 @@ export const AuthProvider = ({ children }) => {
 
   const clearError = () => setError("");
 
-  /* =============== Auth Methods =============== */
+  /* =============== Helpers =============== */
 
   const ensurePersistence = async () => {
-    // guard: auth might be null very early during hydration
     if (!auth) return;
     try {
       await setPersistence(auth, browserLocalPersistence);
     } catch (e) {
-      console.error("[auth] setPersistence failed:", e);
+      // कुछ contexts में (3rd-party cookies off) fail हो सकता है, ignore
+      // console.warn("[auth] setPersistence failed:", e);
     }
   };
+
+  /* =============== Auth Methods =============== */
 
   const login = async (email, password) => {
     try {
@@ -46,10 +48,12 @@ export const AuthProvider = ({ children }) => {
       clearError();
       await ensurePersistence();
       await signInWithEmailAndPassword(auth, email, password);
+      // login के तुरंत बाद token warm
+      await auth.currentUser?.getIdToken(true).catch(() => {});
       return { ok: true };
     } catch (err) {
-      setError(err.message);
-      return { ok: false, error: err.message };
+      setError(err?.message || "Login failed");
+      return { ok: false, error: err?.message };
     } finally {
       setLoading(false);
     }
@@ -61,10 +65,11 @@ export const AuthProvider = ({ children }) => {
       clearError();
       await ensurePersistence();
       await createUserWithEmailAndPassword(auth, email, password);
+      await auth.currentUser?.getIdToken(true).catch(() => {});
       return { ok: true };
     } catch (err) {
-      setError(err.message);
-      return { ok: false, error: err.message };
+      setError(err?.message || "Signup failed");
+      return { ok: false, error: err?.message };
     } finally {
       setLoading(false);
     }
@@ -77,10 +82,11 @@ export const AuthProvider = ({ children }) => {
       await ensurePersistence();
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      await auth.currentUser?.getIdToken(true).catch(() => {});
       return { ok: true };
     } catch (err) {
-      setError(err.message);
-      return { ok: false, error: err.message };
+      setError(err?.message || "Google login failed");
+      return { ok: false, error: err?.message };
     } finally {
       setLoading(false);
     }
@@ -93,8 +99,8 @@ export const AuthProvider = ({ children }) => {
       await sendPasswordResetEmail(auth, email);
       return { ok: true };
     } catch (err) {
-      setError(err.message);
-      return { ok: false, error: err.message };
+      setError(err?.message || "Could not send reset email");
+      return { ok: false, error: err?.message };
     } finally {
       setLoading(false);
     }
@@ -104,51 +110,108 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       await signOut(auth);
+      // listener खुद null कर देगा
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || "Logout failed");
     } finally {
       setLoading(false);
     }
   };
 
-  /* =============== Auth State Listener =============== */
+  /* =============== Auth State + Hardening =============== */
+
+  const refreshTimerRef = useRef(null);
+
   useEffect(() => {
     if (!auth) {
-      // very early render before firebase bootstraps
       setReady(true);
       return;
     }
 
-    // ensure persistence once at mount too (in case user reloaded)
-    ensurePersistence();
+    let didInit = false;
 
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u || null);
-      setReady(true);
-    });
+    (async () => {
+      await ensurePersistence();
 
-    return () => unsub();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      // 🔁 token-aware listener
+      const unsub = onIdTokenChanged(auth, async (u) => {
+        try {
+          if (u) {
+            // light refresh (non-blocking)
+            await u.getIdToken().catch(() => {});
+            setUser(u);
+          } else {
+            setUser(null);
+          }
+        } finally {
+          if (!didInit) {
+            didInit = true;
+            setReady(true);
+          }
+        }
+      });
+
+      // ⏱️ periodic silent refresh (~50m)
+      refreshTimerRef.current = window.setInterval(async () => {
+        const u = auth.currentUser;
+        if (u) {
+          try {
+            await u.getIdToken(true);
+          } catch {}
+        }
+      }, 50 * 60 * 1000);
+
+      // 💤 tab visible/online होने पर refresh
+      const onVisible = async () => {
+        if (document.visibilityState === "visible" && auth.currentUser) {
+          try {
+            await auth.currentUser.getIdToken(true);
+          } catch {}
+        }
+      };
+      const onOnline = async () => {
+        if (auth.currentUser) {
+          try {
+            await auth.currentUser.getIdToken(true);
+          } catch {}
+        }
+      };
+
+      document.addEventListener("visibilitychange", onVisible);
+      window.addEventListener("online", onOnline);
+
+      // cleanup
+      return () => {
+        unsub();
+        if (refreshTimerRef.current) clearInterval(refreshTimerRef.current);
+        document.removeEventListener("visibilitychange", onVisible);
+        window.removeEventListener("online", onOnline);
+      };
+    })();
+
+    // safety cleanup
+    return () => {
+      if (refreshTimerRef.current) clearInterval(refreshTimerRef.current);
+    };
   }, [auth]);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        ready,
-        loading,
-        error,
-        clearError,
-        login,
-        signup,
-        googleLogin,
-        forgot,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      ready,
+      loading,
+      error,
+      clearError,
+      login,
+      signup,
+      googleLogin,
+      forgot,
+      logout,
+    }),
+    [user, ready, loading, error]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 /* =============== Safe Hook =============== */
