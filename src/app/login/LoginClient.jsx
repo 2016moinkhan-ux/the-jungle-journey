@@ -11,15 +11,17 @@ export default function LoginClient() {
   const search = useSearchParams();
   const nextParam = search.get("next") || "/";
 
-  const { user, ready, loading, error, login, googleLogin, clearError } =
-    useAuth();
+  const { user, ready, loading, error, login, googleLogin, clearError } = useAuth();
 
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
 
+  // ✅ अगर पहले से login है तो redirect करो
   useEffect(() => {
     if (!ready) return;
-    if (user) router.replace(nextParam);
+    if (user) {
+      router.replace(nextParam);
+    }
   }, [ready, user, router, nextParam]);
 
   if (!ready) {
@@ -36,13 +38,18 @@ export default function LoginClient() {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim() || !pwd) return;
+
     const res = await login(email.trim(), pwd);
-    if (res.ok) router.replace(nextParam);
+    if (res?.ok) {
+      router.replace(nextParam);
+    }
   };
 
   const onGoogle = async () => {
     const res = await googleLogin();
-    if (res.ok) router.replace(nextParam);
+    if (res?.ok) {
+      router.replace(nextParam);
+    }
   };
 
   return (
@@ -55,13 +62,14 @@ export default function LoginClient() {
           Sign in to <strong>The Jungle Journey</strong>
         </p>
 
+        {/* ✅ Error safely clear */}
         {error ? (
           <div className="mb-4 rounded-lg bg-red-50 text-red-600 px-3 py-2 text-sm ring-1 ring-red-200">
-            {error}
+            {String(error)}
           </div>
         ) : null}
 
-        {/* Google Button - White with border */}
+        {/* Google Button */}
         <button
           type="button"
           onClick={onGoogle}
