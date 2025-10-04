@@ -1,39 +1,28 @@
 // src/firebase/firebase.js
-// Client-safe Firebase bootstrap (Next.js App Router friendly)
+// Client-safe Firebase bootstrap (Next.js App Router friendly, SSR-safe)
 
 import { initializeApp, getApps, getApp } from "firebase/app";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  setPersistence,
-  browserLocalPersistence,
-} from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { firebaseConfig } from "./config"; // ✅ single source of truth (with strict env checks)
 
-// ✅ Env configs (client & Vercel ke liye public vars)
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-// ✅ Ek hi instance rakho
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+let app;
+// Ensure single app instance across HMR / reloads
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
 
 // ---- Lazy singletons (client only) ----
 let _auth = null;
-let _googleProvider = null;
 
-/**
- * Safe getter (prefer this inside client components)
- */
 export function getClientAuth() {
-  if (typeof window === "undefined") return null; // ❌ server par mat banao
+  // ❌ Never construct Firebase Auth on the server
+  if (typeof window === "undefined") return null;
+
   if (!_auth) {
     _auth = getAuth(app);
-    // ✅ force browserLocalPersistence on first init
+    // Persist login across tabs/sessions
     setPersistence(_auth, browserLocalPersistence).catch((e) => {
       console.error("[firebase] setPersistence error:", e);
     });
@@ -41,22 +30,20 @@ export function getClientAuth() {
   return _auth;
 }
 
-/**
- * Direct export for backward-compat
- * On server => null, on client => singleton
- */
-export const auth = typeof window === "undefined" ? null : getClientAuth();
-
-/**
- * Google provider (client only)
- */
-export function getGoogleProvider() {
-  if (typeof window === "undefined") return null;
-  if (!_googleProvider) {
-    _googleProvider = new GoogleAuthProvider();
-    _googleProvider.setCustomParameters({ prompt: "select_account" });
-  }
-  return _googleProvider;
-}
+// Backward-compat: on server => null; on client => same singleton
+export const auth =
+  typeof window === "undefined" ? null : getClientAuth();
 
 export { app };
+
+// (Optional) If you need Google provider later, define it here:
+// import { GoogleAuthProvider } from "firebase/auth";
+// let _googleProvider = null;
+// export function getGoogleProvider() {
+//   if (typeof window === "undefined") return null;
+//   if (!_googleProvider) {
+//     _googleProvider = new GoogleAuthProvider();
+//     _googleProvider.setCustomParameters({ prompt: "select_account" });
+//   }
+//   return _googleProvider;
+// }
